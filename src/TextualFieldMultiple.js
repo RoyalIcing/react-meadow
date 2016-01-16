@@ -6,6 +6,7 @@ export default function TextualFieldMultiple({
   type = 'text',
   values = [],
   title,
+  description,
   required,
   recommended,
   placeholder,
@@ -36,7 +37,7 @@ export default function TextualFieldMultiple({
   ));
 
   const children = [
-    <FieldLabel key='label' title={ title } />
+    <FieldLabel key='label' title={ title } description={ description } />
   ].concat(fieldElements);
 
   return (
