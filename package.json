@@ -32,5 +32,8 @@
     "babel-preset-es2015": "^6.1.18",
     "babel-preset-react": "^6.1.18",
     "rimraf": "^2.4.3"
+  },
+  "peerDependencies": {
+    "react": "^0.14.0"
   }
 }
