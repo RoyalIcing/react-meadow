@@ -109,7 +109,7 @@ export default React.createClass({
     const fieldElements = fields.map((fieldJSON) => (
       createElementForField({
         fieldJSON,
-        valueForField: values ? values[fieldJSON.id] : null,
+        value: values[fieldJSON.id],
         inputComponent,
         onReplaceInfoAtKeyPath
       })
