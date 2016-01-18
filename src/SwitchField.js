@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 
+import DefaultInput from './DefaultInput';
 import FieldLabel from './FieldLabel';
 
 export default React.createClass({
@@ -12,6 +13,7 @@ export default React.createClass({
       required: false,
       recommended: false,
       tabIndex: 0,
+      inputComponent: DefaultInput,
       labelComponent: FieldLabel,
     };
   },
@@ -29,6 +31,7 @@ export default React.createClass({
   render() {
     const {
       value,
+      inputComponent: InputComponent,
       labelComponent: LabelComponent,
       title,
       description,
@@ -38,10 +41,10 @@ export default React.createClass({
     } = this.props;
 
     const element = (
-      <input
+      <InputComponent
         key='checkbox'
         type='checkbox'
-        checked={ value }
+        value={ value }
         onChange={ this.onChange }
       />
     );

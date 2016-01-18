@@ -7,7 +7,7 @@ import FieldGroup from './FieldGroup';
 import SwitchField from './SwitchField';
 import fieldTypeIsTextual from './utils/fieldTypeIsTextual';
 
-function createElementForField({ fieldJSON, value, onReplaceInfoAtKeyPath }) {
+function createElementForField({ fieldJSON, value, inputComponent, onReplaceInfoAtKeyPath }) {
   const type = fieldJSON.type || 'text';
   const ID = fieldJSON.id;
   const title = fieldJSON.title;
@@ -15,7 +15,7 @@ function createElementForField({ fieldJSON, value, onReplaceInfoAtKeyPath }) {
   let multiple = fieldJSON.multiple || false;
   let required = fieldJSON.required || false;
   let recommended = fieldJSON.recommended || false;
-  let placeholder = fieldJSON.placeholder || null;
+  let placeholder = fieldJSON.placeholder;
 
   if (fieldTypeIsTextual(type)) {
     let props = {
@@ -25,7 +25,8 @@ function createElementForField({ fieldJSON, value, onReplaceInfoAtKeyPath }) {
       description,
       required,
       recommended,
-      placeholder
+      placeholder,
+      inputComponent
     };
 
     if (multiple) {
@@ -67,6 +68,7 @@ function createElementForField({ fieldJSON, value, onReplaceInfoAtKeyPath }) {
       <SwitchField key={ ID }
         value={ value }
         title={ title }
+        inputComponent={ inputComponent }
         onValueChanged={ (newValue) => {
           onReplaceInfoAtKeyPath(newValue, [ID]);
         } }
@@ -79,6 +81,7 @@ function createElementForField({ fieldJSON, value, onReplaceInfoAtKeyPath }) {
         fields={ fieldJSON.fields }
         value={ value }
         title={ title }
+        inputComponent={ inputComponent }
         onReplaceInfoAtKeyPath={ (info, additionalKeyPath = []) => {
           let keyPath = [ID].concat(additionalKeyPath);
           onReplaceInfoAtKeyPath(info, keyPath);
@@ -101,12 +104,13 @@ export default React.createClass({
   },
 
   render() {
-    const { fields, values, onReplaceInfoAtKeyPath } = this.props;
+    const { fields, values, inputComponent, onReplaceInfoAtKeyPath } = this.props;
 
     const fieldElements = fields.map((fieldJSON) => (
       createElementForField({
         fieldJSON,
         valueForField: values ? values[fieldJSON.id] : null,
+        inputComponent,
         onReplaceInfoAtKeyPath
       })
     ));

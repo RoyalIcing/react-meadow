@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 
 import FieldLabel from './FieldLabel';
+import Meadow from './Meadow';
 
 export default React.createClass({
   getDefaultProps() {
@@ -29,14 +30,16 @@ export default React.createClass({
       title,
       description,
       tabIndex,
+      inputComponent: InputComponent,
       labelComponent: LabelComponent
     } = this.props;
 
     let element = (
-      <FieldsHolder
+      <Meadow
         key='fields'
         fields={ fields }
         values={ value }
+        inputComponent={ inputComponent }
         onReplaceInfoAtKeyPath={ this.onChildFieldReplaceInfoAtKeyPath }
       />
     );

@@ -13,6 +13,7 @@ export default function TextualFieldMultiple({
   continuous = false,
   tabIndex = 0,
   onValueChangedAtIndex,
+  inputComponent,
   labelComponent = FieldLabel,
 }) {
   // Add additional value ready to be filled in.
@@ -22,6 +23,7 @@ export default function TextualFieldMultiple({
 
   const fieldElements = values.map((value, valueIndex) => (
     <TextualField key={ `field-${valueIndex}` }
+      inputComponent={ inputComponent },
       labelComponent={ null }
       type={ type }
       required={ required }

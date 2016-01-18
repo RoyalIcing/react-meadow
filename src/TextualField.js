@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 
+import DefaultInput from './DefaultInput';
 import FieldLabel from './FieldLabel';
 import * as keyCodes from '../utils/keyCodes';
 
@@ -15,6 +16,7 @@ export default React.createClass({
       continuous: false,
       onValueChanged: null,
       tabIndex: 0,
+      inputComponent: DefaultInput,
       labelComponent: FieldLabel,
     };
   },
@@ -53,6 +55,7 @@ export default React.createClass({
   render() {
     let {
       type,
+      inputComponent: InputComponent,
       labelComponent: LabelComponent,
       long,
       required,
@@ -93,7 +96,7 @@ export default React.createClass({
     }
     else {
       inputElement = (
-        <input
+        <InputComponent
           type={ type }
           value={ value }
           placeholder={ placeholder }
