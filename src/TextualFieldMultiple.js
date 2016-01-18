@@ -23,7 +23,7 @@ export default function TextualFieldMultiple({
 
   const fieldElements = values.map((value, valueIndex) => (
     <TextualField key={ `field-${valueIndex}` }
-      inputComponent={ inputComponent },
+      inputComponent={ inputComponent }
       labelComponent={ null }
       type={ type }
       required={ required }
