@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 
 import DefaultInput from './DefaultInput';
 import FieldLabel from './FieldLabel';
-import * as keyCodes from '../utils/keyCodes';
+import * as keyCodes from './utils/keyCodes';
 
 export default React.createClass({
   getDefaultProps() {

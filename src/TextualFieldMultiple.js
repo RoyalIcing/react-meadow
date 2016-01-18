@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 
 import FieldLabel from './FieldLabel';
+import TextualField from './TextualField';
 
 export default function TextualFieldMultiple({
   type = 'text',
