@@ -3,6 +3,7 @@ import React, { PropTypes } from 'react';
 import TextualFieldMultiple from './TextualFieldMultiple';
 import TextualField from './TextualField';
 import ChoiceField from './ChoiceField';
+import TypeChoice from './TypeChoice';
 import resolveFields from './utils/resolveFields';
 
 const Meadow = React.createClass({
