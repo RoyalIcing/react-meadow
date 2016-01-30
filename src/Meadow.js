@@ -3,7 +3,6 @@ import React, { PropTypes } from 'react';
 import TextualFieldMultiple from './TextualFieldMultiple';
 import TextualField from './TextualField';
 import ChoiceField from './ChoiceField';
-import SwitchField from './SwitchField';
 import resolveFields from './utils/resolveFields';
 
 const Meadow = React.createClass({
@@ -86,6 +85,7 @@ const Meadow = React.createClass({
           { ...rest }
           type={ type }
           value={ value }
+          fieldComponent={ Field }
           onChangeValue={ newValue => {
             onReplaceInfoAtKeyPath(newValue, [id]);
           } }
@@ -146,7 +146,7 @@ const Meadow = React.createClass({
 
     const resolvedFields = resolveFields({ fields, fieldSpecs });
     const fieldElements = resolvedFields.map(field => (
-      renderField({
+      this.renderField({
         field,
         value: values[field.id],
         level,

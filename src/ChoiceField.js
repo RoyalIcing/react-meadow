@@ -1,7 +1,5 @@
 import React, { PropTypes } from 'react';
 
-import Field from './Field';
-
 export default React.createClass({
   getDefaultProps() {
     return {
@@ -28,7 +26,7 @@ export default React.createClass({
   },
 
   render() {
-    const { choices } = this.props;
+    const { choices, fieldComponent: Field } = this.props;
 
     // Expand just a value into { id: value, title: value };
     const adjustedChoices = choices.map(choice => {
@@ -42,7 +40,7 @@ export default React.createClass({
 
     return (
       <Field { ...this.props }
-        value={ getSelectedChoiceID() }
+        value={ this.getSelectedChoiceID() }
         choices={ adjustedChoices }
       />
     );
