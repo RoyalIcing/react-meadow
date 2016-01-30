@@ -15,7 +15,7 @@ function Input({
 
   if (type === 'boolean') {
     return (
-      <input type={ type } checked={ value } { ...rest } onChange={ onChange } />
+      <input type='checkbox' checked={ value } { ...rest } onChange={ onChange } />
     );
   }
   else if (type === 'choice') {
