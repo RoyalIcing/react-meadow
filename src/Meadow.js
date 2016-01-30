@@ -37,7 +37,7 @@ const Meadow = React.createClass({
       description: PropTypes.string,
       onReplaceInfoAtKeyPath: PropTypes.func.isRequired,
     };
-  }
+  },
 
   renderField({ field, value, level }) {
     const { fieldSpecs, fieldComponent: Field, onReplaceInfoAtKeyPath } = this.props;
