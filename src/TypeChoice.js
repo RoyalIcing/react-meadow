@@ -59,8 +59,7 @@ export default React.createClass({
       title,
       description,
       tabIndex,
-      inputComponent: InputComponent,
-      labelComponent: LabelComponent,
+      fieldComponent: Field,
     } = this.props;
 
     const selectedType = this.getSelectedType();
@@ -76,7 +75,7 @@ export default React.createClass({
     });
 
     let element = (
-      <InputComponent key='typeChoice'
+      <Field key='typeChoice'
         type='choice'
         value={ selectedType }
         choices={ types }
@@ -84,14 +83,6 @@ export default React.createClass({
         tabIndex={ tabIndex }
       />
     );
-
-    if (LabelComponent) {
-      element = (
-        <LabelComponent key='label' title={ title } description={ description }>
-          { element }
-        </LabelComponent>
-      );
-    }
 
     let children = [ element ];
 
