@@ -55,6 +55,7 @@ const Meadow = React.createClass({
         <Meadow key={ id }
           { ...rest }
           values={ value }
+          fieldSpecs={ fieldSpecs }
           fieldComponent={ Field }
           groupComponent={ groupComponent }
           level={ level + 1 }
