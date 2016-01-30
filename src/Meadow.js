@@ -3,19 +3,20 @@ import React, { PropTypes } from 'react';
 import TextualFieldMultiple from './TextualFieldMultiple';
 import TextualField from './TextualField';
 import ChoiceField from './ChoiceField';
-import FieldGroup from './FieldGroup';
 import SwitchField from './SwitchField';
 import resolveFields from './utils/resolveFields';
 
-export default React.createClass({
+const Meadow = React.createClass({
   getDefaultProps() {
     return {
       fields: [],
       values: {},
+      groupComponent: 'div',
+      level: 0,
     }
   },
 
-  createElementForField(field, value) {
+  renderField({ field, value, level }) {
     const { fieldSpecs, fieldComponent: Field, onReplaceInfoAtKeyPath } = this.props;
 
     const {
@@ -26,13 +27,15 @@ export default React.createClass({
     } = field;
 
     if (type === 'group') {
+      const { groupComponent, level } = this.props;
+
       return (
-        <FieldGroup key={ id }
-          value={ value }
-          fieldSpecs={ fieldSpecs }
+        <Meadow key={ id }
           { ...rest }
-          inputComponent={ inputComponent }
-          labelComponent={ labelComponent }
+          values={ value }
+          fieldComponent={ Field }
+          groupComponent={ groupComponent }
+          level={ level + 1 }
           onReplaceInfoAtKeyPath={ (info, additionalKeyPath = []) => {
             const keyPath = [id].concat(additionalKeyPath);
             onReplaceInfoAtKeyPath(info, keyPath);
@@ -43,10 +46,10 @@ export default React.createClass({
     else if (type === 'typeChoice') {
       return (
         <TypeChoice key={ id }
+          { ...rest }
           value={ value }
           fieldSpecs={ fieldSpecs }
           fieldComponent={ Field }
-          { ...rest }
           onReplaceInfoAtKeyPath={ (info, additionalKeyPath = []) => {
             const keyPath = [id].concat(additionalKeyPath);
             onReplaceInfoAtKeyPath(info, keyPath);
@@ -54,11 +57,24 @@ export default React.createClass({
         />
       );
     }
-    else if (type === 'choice' || type === 'boolean') {
+    else if (type === 'choice') {
+      return (
+        <ChoiceField key={ id }
+          { ...rest }
+          type={ type }
+          value={ value }
+          onChangeValue={ newValue => {
+            onReplaceInfoAtKeyPath(newValue, [id]);
+          } }
+        />
+      );
+    }
+    else if (type === 'boolean') {
       return (
         <Field key={ id }
-          value={ value }
           { ...rest }
+          type={ type }
+          value={ value }
           onChangeValue={ newValue => {
             onReplaceInfoAtKeyPath(newValue, [id]);
           } }
@@ -102,21 +118,24 @@ export default React.createClass({
 
   render() {
     const {
-      fields,
-      fieldSpecs,
-      values,
+      fields, values, fieldSpecs, level, title, description, required, recommended, groupComponent: Group
     } = this.props;
 
     const resolvedFields = resolveFields({ fields, fieldSpecs });
-
     const fieldElements = resolvedFields.map(field => (
-      createElementForField(field, values[field.id])
+      renderField({
+        field,
+        value: values[field.id],
+        level,
+      })
     ));
 
     return (
-      <div>
+      <Group level={ level } title={ title } description={ description } required={ required } recommended={ recommended }>
         { fieldElements }
-      </div>
+      </Group>
     );
   }
 });
+
+export default Meadow;
