@@ -1,5 +1,5 @@
-import fieldComponent from '../MaterialUIField';
-import groupComponent from '../MaterialUIGroup';
+import fieldComponent from './MaterialUIField';
+import groupComponent from './MaterialUIGroup';
 
 export default {
   fieldComponent,
