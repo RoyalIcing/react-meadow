@@ -1,7 +1,5 @@
 import React, { PropTypes } from 'react';
 
-import DefaultInput from './DefaultInput';
-import FieldLabel from './FieldLabel';
 import * as keyCodes from './utils/keyCodes';
 
 export default React.createClass({
@@ -14,10 +12,8 @@ export default React.createClass({
       recommended: false,
       placeholder: null,
       continuous: false,
-      onValueChanged: null,
+      onChangeValue: null,
       tabIndex: 0,
-      inputComponent: DefaultInput,
-      labelComponent: FieldLabel,
     };
   },
 
@@ -27,23 +23,29 @@ export default React.createClass({
     };
   },
 
+  commitPendingValue() {
+    this.props.onChangeValue(this.state.pendingValue || this.props.value);
+
+    this.setState({ pendingValue: null });
+  },
+
   onKeyDown(event) {
     let keyCode = event.which;
     if (keyCode === keyCodes.returnOrEnter) {
-      this.onCommitChange(event);
+      this.commitPendingValue();
     }
   },
 
   onBlur(event) {
-    this.onCommitChange(event);
+    this.commitPendingValue();
   },
 
-  onMakePendingChange(event) {
-    this.setState({ pendingValue: event.target.value });
+  onChangePendingValue(value) {
+    this.setState({ pendingValue: value });
   },
 
-  onCommitChange(event) {
-    this.props.onValueChanged(event.target.value);
+  onCommitValue(value) {
+    this.props.onChangeValue(value);
 
     this.setState({ pendingValue: null });
   },
@@ -55,8 +57,6 @@ export default React.createClass({
   render() {
     let {
       type,
-      inputComponent: InputComponent,
-      labelComponent: LabelComponent,
       long,
       required,
       recommended,
@@ -66,9 +66,10 @@ export default React.createClass({
       continuous,
       value,
       tabIndex,
-      onValueChanged
+      fieldComponent: Field,
     } = this.props;
-    let {
+
+    const {
       pendingValue
     } = this.state;
 
@@ -76,50 +77,16 @@ export default React.createClass({
       value = pendingValue;
     }
 
-    let inputElement;
-
-    const onChange = continuous ?
-      this.onCommitChange : this.onMakePendingChange;
-
-    if (long) {
-      inputElement = (
-        <textarea
-          value={ value }
-          placeholder={ placeholder }
-          rows={ 6 }
-          onKeyDown={ this.onKeyDown }
-          onBlur={ this.onBlur }
-          onChange={ onChange }
-          tabIndex={ tabIndex }
-        />
-      );
-    }
-    else {
-      inputElement = (
-        <InputComponent
-          type={ type }
-          value={ value }
-          placeholder={ placeholder }
-          onKeyDown={ this.onKeyDown }
-          onBlur={ this.onBlur }
-          onChange={ onChange }
-          tabIndex={ tabIndex }
-        />
-      );
-    }
-
-    if (LabelComponent) {
-      return (
-        <LabelComponent
-          title={ title }
-          description={ description }
-          required={ required }
-          recommended={ recommended }
-        >{ inputElement }</LabelComponent>
-      );
-    }
-    else {
-      return inputElement;
-    }
+    return (
+      <Field
+        type={ type }
+        value={ value }
+        placeholder={ placeholder }
+        onKeyDown={ this.onKeyDown }
+        onBlur={ this.onBlur }
+        onChangeValue={ continuous ? this.onCommitValue : this.onChangePendingValue }
+        tabIndex={ tabIndex }
+      />
+    );
   }
 });

@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 
-import FieldLabel from './FieldLabel';
 import Meadow from './Meadow';
 
 export default React.createClass({
@@ -12,7 +11,6 @@ export default React.createClass({
       description: null,
       onReplaceInfoAtKeyPath: null,
       tabIndex: 0,
-      labelComponent: FieldLabel,
     };
   },
 
@@ -24,8 +22,9 @@ export default React.createClass({
   },
 
   render() {
-    let {
+    const {
       fields,
+      fieldSpecs,
       value,
       title,
       description,
@@ -38,6 +37,7 @@ export default React.createClass({
       <Meadow
         key='fields'
         fields={ fields }
+        fieldSpecs={ fieldSpecs }
         values={ value }
         inputComponent={ inputComponent }
         onReplaceInfoAtKeyPath={ this.onChildFieldReplaceInfoAtKeyPath }

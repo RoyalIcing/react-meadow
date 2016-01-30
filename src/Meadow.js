@@ -5,21 +5,59 @@ import TextualField from './TextualField';
 import ChoiceField from './ChoiceField';
 import FieldGroup from './FieldGroup';
 import SwitchField from './SwitchField';
-import fieldTypeIsTextual from './utils/fieldTypeIsTextual';
+import resolveFields from './utils/resolveFields';
 
-function createElementForField({ fieldJSON, value, inputComponent, onReplaceInfoAtKeyPath }) {
-  const type = fieldJSON.type || 'text';
-  const ID = fieldJSON.id;
-  const title = fieldJSON.title;
-  const description = fieldJSON.description;
-  let multiple = fieldJSON.multiple || false;
-  let required = fieldJSON.required || false;
-  let recommended = fieldJSON.recommended || false;
-  let placeholder = fieldJSON.placeholder;
+function createElementForField({ field, value, fieldSpecs, Field, onReplaceInfoAtKeyPath }) {
+  const {
+    type,
+    id,
+    multiple,
+    ...rest
+  } = field;
 
-  if (fieldTypeIsTextual(type)) {
+  if (type === 'group') {
+    return (
+      <FieldGroup key={ id }
+        value={ value }
+        fieldSpecs={ fieldSpecs }
+        { ...rest }
+        inputComponent={ inputComponent }
+        labelComponent={ labelComponent }
+        onReplaceInfoAtKeyPath={ (info, additionalKeyPath = []) => {
+          const keyPath = [id].concat(additionalKeyPath);
+          onReplaceInfoAtKeyPath(info, keyPath);
+        } }
+      />
+    );
+  }
+  else if (type === 'typeChoice') {
+    return (
+      <TypeChoice key={ id }
+        value={ value }
+        fieldSpecs={ fieldSpecs }
+        fieldComponent={ Field }
+        { ...rest }
+        onReplaceInfoAtKeyPath={ (info, additionalKeyPath = []) => {
+          const keyPath = [id].concat(additionalKeyPath);
+          onReplaceInfoAtKeyPath(info, keyPath);
+        } }
+      />
+    );
+  }
+  else if (type === 'choice' || type === 'boolean') {
+    return (
+      <Field key={ id }
+        value={ value }
+        { ...rest }
+        onChangeValue={ newValue => {
+          onReplaceInfoAtKeyPath(newValue, [id]);
+        } }
+      />
+    );
+  }
+  else {
     let props = {
-      key: ID,
+      key: id,
       type,
       title,
       description,
@@ -31,8 +69,8 @@ function createElementForField({ fieldJSON, value, inputComponent, onReplaceInfo
 
     if (multiple) {
       props.values = value;
-      props.onValueChangedAtIndex = (newValue, valueIndex) => {
-        onReplaceInfoAtKeyPath(newValue, [ID, valueIndex]);
+      props.onChangeValueAtIndex = (newValue, valueIndex) => {
+        onReplaceInfoAtKeyPath(newValue, [id, valueIndex]);
       };
 
       return (
@@ -41,56 +79,14 @@ function createElementForField({ fieldJSON, value, inputComponent, onReplaceInfo
     }
     else {
       props.value = value;
-      props.onValueChanged = (newValue) => {
-        onReplaceInfoAtKeyPath(newValue, [ID]);
+      props.onChangeValue = (newValue) => {
+        onReplaceInfoAtKeyPath(newValue, [id]);
       };
 
       return (
         <TextualField { ...props } />
       );
     }
-  }
-  else if (type === 'choice') {
-    return (
-      <ChoiceField key={ ID }
-        choiceInfos={ fieldJSON.choices }
-        value={ value }
-        title={ title }
-        onReplaceInfoAtKeyPath={ (info, additionalKeyPath = []) => {
-          let keyPath = [ID].concat(additionalKeyPath);
-          onReplaceInfoAtKeyPath(info, keyPath);
-        } }
-      />
-    );
-  }
-  else if (type === 'boolean') {
-    return (
-      <SwitchField key={ ID }
-        value={ value }
-        title={ title }
-        inputComponent={ inputComponent }
-        onValueChanged={ (newValue) => {
-          onReplaceInfoAtKeyPath(newValue, [ID]);
-        } }
-      />
-    );
-  }
-  else if (type === 'group') {
-    return (
-      <FieldGroup key={ ID }
-        fields={ fieldJSON.fields }
-        value={ value }
-        title={ title }
-        inputComponent={ inputComponent }
-        onReplaceInfoAtKeyPath={ (info, additionalKeyPath = []) => {
-          let keyPath = [ID].concat(additionalKeyPath);
-          onReplaceInfoAtKeyPath(info, keyPath);
-        } }
-      />
-    );
-  }
-  else {
-    console.error('unknown field type', type);
   }
 }
 
@@ -99,19 +95,27 @@ export default React.createClass({
     return {
       fields: [],
       values: {},
-      onChangeInfo: null
     }
   },
 
   render() {
-    const { fields, values, inputComponent, onReplaceInfoAtKeyPath } = this.props;
+    const {
+      fields,
+      fieldSpecs,
+      values,
+      fieldComponent: Field,
+      onReplaceInfoAtKeyPath,
+    } = this.props;
 
-    const fieldElements = fields.map((fieldJSON) => (
+    const resolvedFields = resolveFields({ fields, fieldSpecs });
+
+    const fieldElements = resolvedFields.map(field => (
       createElementForField({
-        fieldJSON,
-        value: values[fieldJSON.id],
-        inputComponent,
-        onReplaceInfoAtKeyPath
+        field,
+        value: values[field.id],
+        fieldSpecs,
+        Field,
+        onReplaceInfoAtKeyPath,
       })
     ));
 

@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 
-import FieldLabel from './FieldLabel';
 import TextualField from './TextualField';
 
 export default function TextualFieldMultiple({
@@ -13,9 +12,9 @@ export default function TextualFieldMultiple({
   placeholder,
   continuous = false,
   tabIndex = 0,
-  onValueChangedAtIndex,
+  onChangeValueAtIndex,
   inputComponent,
-  labelComponent = FieldLabel,
+  labelComponent,
 }) {
   // Add additional value ready to be filled in.
   if (values.length === 0 || (values[values.length - 1] || '').length !== 0) {
@@ -33,8 +32,8 @@ export default function TextualFieldMultiple({
       continuous={ continuous }
       value={ value }
       tabIndex={ tabIndex }
-      onValueChanged={ (newValue) => {
-        onValueChangedAtIndex(newValue, valueIndex)
+      onChangeValue={ (newValue) => {
+        onChangeValueAtIndex(newValue, valueIndex)
       } }
     />
   ));
