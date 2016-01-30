@@ -109,12 +109,7 @@ const Meadow = React.createClass({
       let props = {
         key: id,
         type,
-        title,
-        description,
-        required,
-        recommended,
-        placeholder,
-        inputComponent
+        fieldComponent: Field,
       };
 
       if (multiple) {
@@ -124,7 +119,7 @@ const Meadow = React.createClass({
         };
 
         return (
-          <TextualFieldMultiple { ...props } />
+          <TextualFieldMultiple { ...props } { ...rest } />
         );
       }
       else {
@@ -134,7 +129,7 @@ const Meadow = React.createClass({
         };
 
         return (
-          <TextualField { ...props } />
+          <TextualField { ...props } { ...rest } />
         );
       }
     }
