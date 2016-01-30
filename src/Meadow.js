@@ -9,12 +9,35 @@ import resolveFields from './utils/resolveFields';
 const Meadow = React.createClass({
   getDefaultProps() {
     return {
-      fields: [],
-      values: {},
       groupComponent: 'div',
       level: 0,
     }
   },
+
+  getPropTypes() {
+    return {
+      fields: PropTypes.arrayOf(PropTypes.oneOf([
+        PropTypes.string.isRequired,
+        PropTypes.shape({
+          id: PropTypes.string.isRequired,
+          title: PropTypes.string.isRequired,
+        })
+      ])).isRequired,
+      fieldSpecs: PropTypes.objectOf(
+        PropTypes.shape({
+          type: PropTypes.string.isRequired,
+          title: PropTypes.string.isRequired,
+        })
+      ),
+      values: PropTypes.object.isRequired,
+      fieldComponent: PropTypes.object.isRequired,
+      groupComponent: PropTypes.object.isRequired,
+      //multipleComponent: PropTypes.object.isRequired,
+      title: PropTypes.string,
+      description: PropTypes.string,
+      onReplaceInfoAtKeyPath: PropTypes.func.isRequired,
+    };
+  }
 
   renderField({ field, value, level }) {
     const { fieldSpecs, fieldComponent: Field, onReplaceInfoAtKeyPath } = this.props;
@@ -118,7 +141,7 @@ const Meadow = React.createClass({
 
   render() {
     const {
-      fields, values, fieldSpecs, level, title, description, required, recommended, groupComponent: Group
+      fields, fieldSpecs, values, level, title, description, required, recommended, groupComponent: Group
     } = this.props;
 
     const resolvedFields = resolveFields({ fields, fieldSpecs });
