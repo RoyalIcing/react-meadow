@@ -56,10 +56,8 @@ export default React.createClass({
     const {
       types,
       value,
-      title,
-      description,
-      tabIndex,
       fieldComponent: Field,
+      ...rest,
     } = this.props;
 
     const selectedType = this.getSelectedType();
@@ -79,8 +77,8 @@ export default React.createClass({
         type='choice'
         value={ selectedType }
         choices={ types }
+        { ...rest }
         onChangeValue={ this.onChangeType }
-        tabIndex={ tabIndex }
       />
     );
 
