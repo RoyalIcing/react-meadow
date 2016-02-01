@@ -57,23 +57,15 @@ export default React.createClass({
   render() {
     let {
       type,
-      long,
-      required,
-      recommended,
-      title,
-      description,
-      placeholder,
-      continuous,
       value,
-      tabIndex,
+      continuous,
       fieldComponent: Field,
+      ...rest,
     } = this.props;
 
-    const {
-      pendingValue
-    } = this.state;
+    const { pendingValue } = this.state;
 
-    if (typeof pendingValue === 'string') {
+    if (!!pendingValue) {
       value = pendingValue;
     }
 
@@ -81,11 +73,10 @@ export default React.createClass({
       <Field
         type={ type }
         value={ value }
-        placeholder={ placeholder }
+        { ...rest }
         onKeyDown={ this.onKeyDown }
         onBlur={ this.onBlur }
         onChangeValue={ continuous ? this.onCommitValue : this.onChangePendingValue }
-        tabIndex={ tabIndex }
       />
     );
   }
