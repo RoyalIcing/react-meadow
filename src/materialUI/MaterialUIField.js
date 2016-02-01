@@ -8,31 +8,33 @@ export default function MaterialUIField({
   type, value, title, description, placeholder, required, recommended, onChangeValue, long, choices, ...rest
 }) {
   // TODO: present description?
-  
+
   let errorText;
 
   if (required && !!value) {
     errorText = 'Required';
   }
 
-  const onChange = (event) => {
-    const { target } = event;
+  const onSelectChange = (event, index, value) => {
+    onChangeValue(value);
+  }
 
-    onChangeValue((typeof target.value !== 'undefined') ? target.value : target.checked);
+  const onFieldChange = (event) => {
+    onChangeValue(event.target.value);
+  }
 
-    if (!!rest.onChange) {
-      rest.onChange(event);
-    }
+  const onCheckedChange = (event) => {
+    onChangeValue(event.target.checked);
   }
 
   if (type === 'boolean') {
     return (
-      <Checkbox checked={ value } label={ title } errorText={ errorText } { ...rest } onChange={ onChange } />
+      <Checkbox checked={ value } label={ title } errorText={ errorText } { ...rest } onChange={ onCheckedChange } />
     );
   }
   else if (type === 'choice') {
     return (
-      <SelectField value={ value } floatingLabelText={ title } errorText={ errorText } { ...rest } onChange={ onChange }>
+      <SelectField value={ value } floatingLabelText={ title } fullWidth errorText={ errorText } { ...rest } onChange={ onSelectChange }>
         { choices.map(choice =>
           <MenuItem key={ choice.id } value={ choice.id } primaryText={ choice.title } />
         ) }
@@ -42,11 +44,11 @@ export default function MaterialUIField({
   else {
     if (long) {
       return (
-        <TextField value={ value } floatingLabelText={ title } hintText={ placeholder} multiLine rows={ 2 } rowsMax={ 6 } errorText={ errorText } { ...rest } onChange={ onChange } />
+        <TextField value={ value } floatingLabelText={ title } hintText={ placeholder} fullWidth multiLine rows={ 2 } rowsMax={ 6 } errorText={ errorText } { ...rest } onChange={ onFieldChange } />
       )
     } else {
       return (
-        <TextField type={ type } value={ value } floatingLabelText={ title } hintText={ placeholder} errorText={ errorText } { ...rest } onChange={ onChange } />
+        <TextField type={ type } value={ value } floatingLabelText={ title } hintText={ placeholder} fullWidth errorText={ errorText } { ...rest } onChange={ onFieldChange } />
       );
     }
   }
