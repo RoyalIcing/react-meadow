@@ -38,11 +38,7 @@ export default function TextualFieldMultiple({
     />
   ));
 
-  const children = [
-    <FieldLabel key='label' title={ title } description={ description } />
-  ].concat(fieldElements);
-
   return (
-    <div>{ children }</div>
+    <div>{ fieldElements }</div>
   );
 };

@@ -1,6 +1,6 @@
 {
   "name": "react-meadow",
-  "version": "0.2.0a13",
+  "version": "0.2.0a15",
   "description": "Create nested editable fields with just JSON",
   "main": "index.js",
   "scripts": {

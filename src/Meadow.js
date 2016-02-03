@@ -6,12 +6,153 @@ import ChoiceField from './ChoiceField';
 import TypeChoice from './TypeChoice';
 import resolveFields from './utils/resolveFields';
 
+function renderField({
+  field,
+  fieldSpecs,
+  value,
+  level,
+  fieldComponent: Field,
+  groupComponent,
+  multipleComponent,
+  onRemoveAtIndex,
+}) {
+  const {
+    type,
+    id,
+    multiple,
+    title,
+    description,
+    ...rest,
+  } = field;
+
+  if (multiple) {
+    return (
+      <Multiple
+        title={ title }
+        description={ description }
+        values={ values }
+        itemComponent={
+          ({ value, index }) => renderField({
+            field: {
+              type,
+              id: index,
+              value,
+              ...rest,
+            },
+            fieldSpecs,
+            value,
+            level,
+            fieldComponent: Field,
+            groupComponent,
+            multipleComponent,
+            onReplaceInfoAtKeyPath: (value, additionalKeyPath = []) => {
+              const keyPath = [id].concat(additionalKeyPath);
+              onReplaceInfoAtKeyPath(newValue, keyPath);
+            },
+          })
+        }
+      />
+    );
+  }
+  else if (type === 'group') {
+    return (
+      <Meadow key={ id }
+        { ...rest }
+        values={ value }
+        fieldSpecs={ fieldSpecs }
+        fieldComponent={ Field }
+        groupComponent={ groupComponent }
+        level={ level + 1 }
+        onReplaceInfoAtKeyPath={ (info, additionalKeyPath = []) => {
+          const keyPath = [id].concat(additionalKeyPath);
+          onReplaceInfoAtKeyPath(info, keyPath);
+        } }
+      />
+    );
+  }
+  else if (type === 'typeChoice') {
+    return (
+      <TypeChoice key={ id }
+        { ...rest }
+        value={ value }
+        fieldSpecs={ fieldSpecs }
+        title={ title }
+        description={ description }
+        fieldComponent={ Field }
+        onReplaceInfoAtKeyPath={ (info, additionalKeyPath = []) => {
+          const keyPath = [id].concat(additionalKeyPath);
+          onReplaceInfoAtKeyPath(info, keyPath);
+        } }
+      />
+    );
+  }
+  else if (type === 'choice') {
+    return (
+      <ChoiceField key={ id }
+        { ...rest }
+        type={ type }
+        value={ value }
+        title={ title }
+        description={ description }
+        fieldComponent={ Field }
+        onChangeValue={ newValue => {
+          onReplaceInfoAtKeyPath(newValue, [id]);
+        } }
+      />
+    );
+  }
+  else if (type === 'boolean') {
+    return (
+      <Field key={ id }
+        { ...rest }
+        type={ type }
+        value={ value }
+        title={ title }
+        description={ description }
+        onChangeValue={ newValue => {
+          onReplaceInfoAtKeyPath(newValue, [id]);
+        } }
+      />
+    );
+  }
+  else {
+    let props = {
+      key: id,
+      type,
+      title,
+      description,
+      fieldComponent: Field,
+    };
+
+    if (multiple) {
+      props.values = value;
+      props.onChangeValueAtIndex = (newValue, valueIndex) => {
+        onReplaceInfoAtKeyPath(newValue, [id, valueIndex]);
+      };
+
+      return (
+        <TextualFieldMultiple { ...props } { ...rest } />
+      );
+    }
+    else {
+      props.value = value;
+      props.onChangeValue = (newValue) => {
+        onReplaceInfoAtKeyPath(newValue, [id]);
+      };
+
+      return (
+        <TextualField { ...props } { ...rest } />
+      );
+    }
+  }
+}
+
 const Meadow = React.createClass({
   getDefaultProps() {
     return {
       groupComponent: 'div',
       level: 0,
-    }
+    };
   },
 
   getPropTypes() {
@@ -39,115 +180,47 @@ const Meadow = React.createClass({
     };
   },
 
-  renderField({ field, value, level }) {
-    const { fieldSpecs, fieldComponent: Field, onReplaceInfoAtKeyPath } = this.props;
-
-    const {
-      type,
-      id,
-      multiple,
-      ...rest
-    } = field;
-
-    if (type === 'group') {
-      const { groupComponent, level } = this.props;
-
-      return (
-        <Meadow key={ id }
-          { ...rest }
-          values={ value }
-          fieldSpecs={ fieldSpecs }
-          fieldComponent={ Field }
-          groupComponent={ groupComponent }
-          level={ level + 1 }
-          onReplaceInfoAtKeyPath={ (info, additionalKeyPath = []) => {
-            const keyPath = [id].concat(additionalKeyPath);
-            onReplaceInfoAtKeyPath(info, keyPath);
-          } }
-        />
-      );
-    }
-    else if (type === 'typeChoice') {
-      return (
-        <TypeChoice key={ id }
-          { ...rest }
-          value={ value }
-          fieldSpecs={ fieldSpecs }
-          fieldComponent={ Field }
-          onReplaceInfoAtKeyPath={ (info, additionalKeyPath = []) => {
-            const keyPath = [id].concat(additionalKeyPath);
-            onReplaceInfoAtKeyPath(info, keyPath);
-          } }
-        />
-      );
-    }
-    else if (type === 'choice') {
-      return (
-        <ChoiceField key={ id }
-          { ...rest }
-          type={ type }
-          value={ value }
-          fieldComponent={ Field }
-          onChangeValue={ newValue => {
-            onReplaceInfoAtKeyPath(newValue, [id]);
-          } }
-        />
-      );
-    }
-    else if (type === 'boolean') {
-      return (
-        <Field key={ id }
-          { ...rest }
-          type={ type }
-          value={ value }
-          onChangeValue={ newValue => {
-            onReplaceInfoAtKeyPath(newValue, [id]);
-          } }
-        />
-      );
-    }
-    else {
-      let props = {
-        key: id,
-        type,
-        fieldComponent: Field,
-      };
-
-      if (multiple) {
-        props.values = value;
-        props.onChangeValueAtIndex = (newValue, valueIndex) => {
-          onReplaceInfoAtKeyPath(newValue, [id, valueIndex]);
-        };
-
-        return (
-          <TextualFieldMultiple { ...props } { ...rest } />
-        );
-      }
-      else {
-        props.value = value;
-        props.onChangeValue = (newValue) => {
-          onReplaceInfoAtKeyPath(newValue, [id]);
-        };
-
-        return (
-          <TextualField { ...props } { ...rest } />
-        );
-      }
-    }
-  },
-
   render() {
     const {
-      fields, fieldSpecs, values, level, title, description, required, recommended, groupComponent: Group
+      fields,
+      fieldSpecs,
+      values,
+      level,
+      title,
+      description,
+      required,
+      recommended,
+      fieldComponent,
+      groupComponent: Group,
+      multipleComponent,
+      onReplaceInfoAtKeyPath,
     } = this.props;
 
     const resolvedFields = resolveFields({ fields, fieldSpecs });
     const fieldElements = resolvedFields.map(field => (
-      this.renderField({
-        field,
-        value: values[field.id],
-        level,
-      })
+      field.multiple ? (
+        this.renderMultiple({
+          field,
+          fieldSpecs,
+          values: values[field.id],
+          level,
+          fieldComponent,
+          groupComponent: Group,
+          multipleComponent,
+          onReplaceInfoAtKeyPath,
+        })
+      ) : (
+        this.renderField({
+          field,
+          fieldSpecs,
+          value: values[field.id],
+          level,
+          fieldComponent,
+          groupComponent: Group,
+          multipleComponent,
+          onReplaceInfoAtKeyPath,
+        })
+      )
     ));
 
     return (
