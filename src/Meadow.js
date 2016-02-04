@@ -9,12 +9,14 @@ import resolveFields from './utils/resolveFields';
 function renderField({
   field,
   fieldSpecs,
+  typeSpecs,
   value,
   level,
+  inMultiple,
   fieldComponent: Field,
   groupComponent,
-  multipleComponent,
-  onRemoveAtIndex,
+  multipleComponent: Multiple,
+  onReplaceInfoAtKeyPath,
 }) {
   const {
     type,
@@ -27,12 +29,13 @@ function renderField({
 
   if (multiple) {
     return (
-      <Multiple
+      <Multiple key={ id }
         title={ title }
         description={ description }
-        values={ values }
+        values={ value }
+        inMultiple={ inMultiple }
         itemComponent={
-          ({ value, index }) => renderField({
+          ({ value, index, title, description }) => renderField({
             field: {
               type,
               id: index,
@@ -40,14 +43,18 @@ function renderField({
               ...rest,
             },
             fieldSpecs,
+            typeSpecs,
             value,
             level,
+            title,
+            description,
+            inMultiple: true,
             fieldComponent: Field,
             groupComponent,
-            multipleComponent,
-            onReplaceInfoAtKeyPath: (value, additionalKeyPath = []) => {
+            multipleComponent: Multiple,
+            onReplaceInfoAtKeyPath: (info, additionalKeyPath = []) => {
               const keyPath = [id].concat(additionalKeyPath);
-              onReplaceInfoAtKeyPath(newValue, keyPath);
+              onReplaceInfoAtKeyPath(info, keyPath);
             },
           })
         }
@@ -60,8 +67,13 @@ function renderField({
         { ...rest }
         values={ value }
         fieldSpecs={ fieldSpecs }
+        typeSpecs={ typeSpecs }
+        title={ title }
+        description={ description }
+        inMultiple={ inMultiple }
         fieldComponent={ Field }
         groupComponent={ groupComponent }
+        multipleComponent={ Multiple }
         level={ level + 1 }
         onReplaceInfoAtKeyPath={ (info, additionalKeyPath = []) => {
           const keyPath = [id].concat(additionalKeyPath);
@@ -76,8 +88,10 @@ function renderField({
         { ...rest }
         value={ value }
         fieldSpecs={ fieldSpecs }
+        typeSpecs={ typeSpecs }
         title={ title }
         description={ description }
+        inMultiple={ inMultiple }
         fieldComponent={ Field }
         onReplaceInfoAtKeyPath={ (info, additionalKeyPath = []) => {
           const keyPath = [id].concat(additionalKeyPath);
@@ -94,6 +108,7 @@ function renderField({
         value={ value }
         title={ title }
         description={ description }
+        inMultiple={ inMultiple }
         fieldComponent={ Field }
         onChangeValue={ newValue => {
           onReplaceInfoAtKeyPath(newValue, [id]);
@@ -109,6 +124,7 @@ function renderField({
         value={ value }
         title={ title }
         description={ description }
+        inMultiple={ inMultiple }
         onChangeValue={ newValue => {
           onReplaceInfoAtKeyPath(newValue, [id]);
         } }
@@ -121,6 +137,7 @@ function renderField({
       type,
       title,
       description,
+      inMultiple,
       fieldComponent: Field,
     };
 
@@ -201,12 +218,14 @@ const Meadow = React.createClass({
     const {
       fields,
       fieldSpecs,
+      typeSpecs,
       values,
       level,
       title,
       description,
       required,
       recommended,
+      inMultiple,
       fieldComponent,
       groupComponent: Group,
       multipleComponent,
@@ -215,33 +234,21 @@ const Meadow = React.createClass({
 
     const resolvedFields = resolveFields({ fields, fieldSpecs });
     const fieldElements = resolvedFields.map(field => (
-      field.multiple ? (
-        this.renderMultiple({
-          field,
-          fieldSpecs,
-          values: values[field.id],
-          level,
-          fieldComponent,
-          groupComponent: Group,
-          multipleComponent,
-          onReplaceInfoAtKeyPath,
-        })
-      ) : (
-        this.renderField({
-          field,
-          fieldSpecs,
-          value: values[field.id],
-          level,
-          fieldComponent,
-          groupComponent: Group,
-          multipleComponent,
-          onReplaceInfoAtKeyPath,
-        })
-      )
+      renderField({
+        field,
+        fieldSpecs,
+        typeSpecs,
+        value: values ? values[field.id] : undefined,
+        level,
+        fieldComponent,
+        groupComponent: Group,
+        multipleComponent,
+        onReplaceInfoAtKeyPath,
+      })
     ));
 
     return (
-      <Group level={ level } title={ title } description={ description } required={ required } recommended={ recommended }>
+      <Group level={ level } title={ title } description={ description } required={ required } recommended={ recommended } inMultiple={ inMultiple }>
         { fieldElements }
       </Group>
     );
