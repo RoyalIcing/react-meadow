@@ -42,14 +42,14 @@ export default function MaterialUIField({
     );
   }
   else {
-    if (long) {
-      return (
-        <TextField value={ value } floatingLabelText={ title } hintText={ placeholder} fullWidth multiLine rows={ 2 } rowsMax={ 6 } errorText={ errorText } { ...rest } onChange={ onFieldChange } />
-      )
-    } else {
-      return (
-        <TextField type={ type } value={ value } floatingLabelText={ title } hintText={ placeholder} fullWidth errorText={ errorText } { ...rest } onChange={ onFieldChange } />
-      );
-    }
+    const extraProps = long ? ({
+      multiLine: true,
+      rows: 2,
+      rowsMax: 6,
+    }) : ({});
+
+    return (
+      <TextField type={ type } value={ value } floatingLabelText={ title } hintText={ placeholder} fullWidth errorText={ errorText } { ...extraProps } { ...rest } onChange={ onFieldChange } />
+    );
   }
 }
