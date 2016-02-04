@@ -180,6 +180,23 @@ const Meadow = React.createClass({
     };
   },
 
+  shouldComponentUpdate(nextProps, nextState) {
+    const currentProps = this.props;
+
+    return (
+      nextProps.fields !== currentProps.fields ||
+      nextProps.fieldSpecs !== currentProps.fieldSpecs ||
+      nextProps.typeSpecs !== currentProps.typeSpecs ||
+      nextProps.values !== currentProps.values ||
+      nextProps.title != currentProps.title ||
+      nextProps.description != currentProps.description ||
+      nextProps.fieldComponent !== currentProps.fieldComponent ||
+      nextProps.groupComponent !== currentProps.groupComponent ||
+      nextProps.multipleComponent !== currentProps.multipleComponent ||
+      nextProps.onReplaceInfoAtKeyPath !== currentProps.onReplaceInfoAtKeyPath
+    );
+  },
+
   render() {
     const {
       fields,
