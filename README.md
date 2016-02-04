@@ -41,28 +41,28 @@ Use the `onReplaceInfoAtKeyPath` prop to receive changes. These are scoped to th
 
 The information can be merged with your previous JSON data using lodash’s `_.set(...)` or Immutable.js’s `Map.setIn(...)`. You then pass this merged information back to Meadow with the `values` prop.
 
-With lodash 4, you just achieve this by:
+With **lodash 4**, you can merge changes using:
 
 ```javascript
 import cloneDeep from 'lodash/lang/cloneDeep';
 import set from 'lodash/object/set';
 
-function replaceInfoAtKeyPath(originalInfo, changedInfo, keyPath) {
+function mergeInfoAtKeyPath(originalInfo, changedInfo, keyPath) {
   return set(cloneDeep(originalInfo), keyPath, changedInfo);
 }
 ```
 
-With ImmutableJS, you can merged changes using:
+With **Immutable.js**, you can merge using:
 
 ```javascript
 import Immutable from 'immutable';
 
-function replaceInfoAtKeyPath(originalImmutableMap, changedInfo, keyPath) {
+function mergeInfoAtKeyPath(originalImmutableMap, changedInfo, keyPath) {
   return originalImmutableMap.setIn(keyPath, Immutable.fromJS(changedInfo));
 }
 ```
 
-You can then pass this function with Meadow’s onReplaceInfoAtKeyPath, assuming the information is kept in your component’s state:
+You can then pass use function with Meadow’s `onReplaceInfoAtKeyPath` handler, assuming the information is kept in your component’s state:
 
 ```javascript
 export default ExampleForm = React.createClass({
@@ -74,7 +74,7 @@ export default ExampleForm = React.createClass({
   
   onReplaceInfoAtKeyPath(changedInfo, keyPath) {
     this.setState(({ info }) => ({
-      info: replaceInfoAtKeyPath(info, changedInfo, keyPath) // See above
+      info: mergeInfoAtKeyPath(info, changedInfo, keyPath) // See above for declaration
     }));
   },
   
