@@ -69,27 +69,35 @@ export default React.createClass({
     const {
       types,
       value,
+      typeSpecs,
+      fieldSpecs,
       fieldComponent: Field,
+      onReplaceInfoAtKeyPath,
       ...rest,
     } = this.props;
 
     const selectedType = this.getSelectedType();
     let selectedTypeSpec = null;
 
-    types.some(typeSpec => {
-      if (typeSpec.id === selectedType) {
-        selectedTypeSpec = typeSpec;
+    types.some(typeID => {
+      if (typeID === selectedType) {
+        selectedTypeSpec = typeSpecs[typeID];
         return false;
       }
 
       return true;
     });
 
+    const typeChoices = types.map(typeID => ({
+      id: typeID,
+      title: typeSpecs[typeID].title,
+    }));
+
     let element = (
       <Field key='typeChoice'
         type='choice'
         value={ selectedType }
-        choices={ types }
+        choices={ typeChoices }
         { ...rest }
         onChangeValue={ this.onChangeType }
       />
@@ -103,6 +111,8 @@ export default React.createClass({
         <Meadow key='fields'
           fields={ selectedTypeSpec.fields }
           values={ value }
+          typeSpecs={ typeSpecs }
+          fieldSpecs={ fieldSpecs }
           onReplaceInfoAtKeyPath={ this.onChildFieldReplaceInfoAtKeyPath }
         />
       );
