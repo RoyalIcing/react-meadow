@@ -114,6 +114,7 @@ export default React.createClass({
           typeSpecs={ typeSpecs }
           fieldSpecs={ fieldSpecs }
           onReplaceInfoAtKeyPath={ this.onChildFieldReplaceInfoAtKeyPath }
+          fieldComponent={ Field }
         />
       );
     }
