@@ -62,7 +62,7 @@ function mergeInfoAtKeyPath(originalImmutableMap, changedInfo, keyPath) {
 }
 ```
 
-You can then pass use function with Meadow’s `onReplaceInfoAtKeyPath` handler, assuming the information is kept in your component’s state:
+You can then use this function in your handler to Meadow’s `onReplaceInfoAtKeyPath`, assuming the information is kept in your component’s state:
 
 ```javascript
 export default ExampleForm = React.createClass({
