@@ -13,6 +13,19 @@ export default React.createClass({
     };
   },
 
+  shouldComponentUpdate(nextProps, nextState) {
+    const currentProps = this.props;
+
+    return (
+      nextProps.types !== currentProps.types ||
+      nextProps.value != currentProps.value ||
+      nextProps.typeSpecs !== currentProps.typeSpecs ||
+      nextProps.fieldSpecs !== currentProps.fieldSpecs ||
+      nextProps.fieldComponent !== currentProps.fieldComponent ||
+      nextProps.onReplaceInfoAtKeyPath !== currentProps.onReplaceInfoAtKeyPath
+    );
+  },
+
   getDefaultSelectedType() {
     // Choose first item by default.
     const { types } = this.props;
