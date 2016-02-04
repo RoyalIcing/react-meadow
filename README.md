@@ -1,6 +1,6 @@
 # react-meadow
 
-React Meadow allows you to create complex forms with nested groups, repeating fields, and connect it to JSON.
+React Meadow allows you to create complex forms from JSON data. It supports text fields, dropdowns, nested groups, and repeated fields.
 
 It allows any UI components to be used, such as native web, Material UI, Bootstrap, or your own.
 
@@ -10,20 +10,26 @@ It allows any UI components to be used, such as native web, Material UI, Bootstr
 npm install react-meadow --save
 ```
 
+## Field Specs
+
+A field spec is a JSON declaration for a particular field. Each field spec has an `id`, which you match a key within your JSON data.
+
+A field spec has a `type` property, which can be one of the following:
+- `text` · A text field. The `type` can also be any of the HTML 5 input types, such as `email`, `tel`, etc.
+- `choice` · A dropdown menu. Additional properties alongside are:
+    - `choices: [ { "id": "some-identifier", "title": "Displayed" }...]` · An array of items to be displayed in the dropdown menu.
+- `boolean` · A checkbox representing a value which can be either `true` or `false`.
+- `group` · A group of fields, representing a child object in the JSON data. Additional properties alongside are:
+  - `"fields": [ "some-field" ]` · An array of field spec IDs matching a key within the JSON data, or optionally a entire field spec object.
+
+
 ## Props
 
 ### `Meadow`
 
-- `fieldSpecs` · JSON array with all the possible fields available. Each field spec has:
-  - `id` · the unique identifier for this field.
-  - `type`, one the following with additional properties:
-    - `"type": "choice"` · A dropdown menu
-    - `"choices": [ { "id": "some-identifier", "title": "Displayed" }...]` · An array of items to be displayed in the dropdown menu.
-    - `"type": "text"` · A text field. The `type` can also be any of the HTML 5 input types, such as `email`, `tel`, etc.
-    - `"type": "group"` · A group of fields.
-  - `multiple` · a boolean for whether this field supports a single value (`false`) or multiple values (`true`) as an array.
+- `fieldSpecs` · JSON array of field specs (see above) with all the possible fields available.
 - `fields` · Ordered array of field spec IDs. These are the fields you want displayed, with their specifications pulled from `fieldSpecs`.
-- `values` · JSON object
+- `values` · Your JSON data
 - `fieldComponent` · the React component used to display the individual fields.
 - `groupComponent` · the React component used to wrap several components in a group.
 - `multipleComponent` · the React component used to wrap multiple components in a list.
@@ -37,13 +43,47 @@ The information can be merged with your previous JSON data using lodash’s `_.s
 
 With lodash 4, you just achieve this by:
 
-```
+```javascript
 import cloneDeep from 'lodash/lang/cloneDeep';
 import set from 'lodash/object/set';
-  
+
 function replaceInfoAtKeyPath(originalInfo, changedInfo, keyPath) {
   return set(cloneDeep(originalInfo), keyPath, changedInfo);
 }
+```
+
+With ImmutableJS, you can merged changes using:
+
+```javascript
+import Immutable from 'immutable';
+
+function replaceInfoAtKeyPath(originalImmutableMap, changedInfo, keyPath) {
+  return originalImmutableMap.setIn(keyPath, Immutable.fromJS(changedInfo));
+}
+```
+
+You can then pass this function with Meadow’s onReplaceInfoAtKeyPath, assuming the information is kept in your component’s state:
+
+```javascript
+export default ExampleForm = React.createClass({
+  getInitialState() {
+    return {
+      info: this.props.initialInfo
+    };
+  },
+  
+  onReplaceInfoAtKeyPath(changedInfo, keyPath) {
+    this.setState(({ info }) => ({
+      info: replaceInfoAtKeyPath(info, changedInfo, keyPath) // See above
+    }));
+  },
+  
+  render() {
+    return (
+      <Meadow /* ... */ onReplaceInfoAtKeyPath={ this.onReplaceInfoAtKeyPath } /> // Or .bind(this) if using ES6 classes
+    );
+  }
+})
 ```
 
 ## UI components
@@ -56,13 +96,13 @@ The particular components for rendering fields, groups, and multiples are all cu
 
 Then pass the result of this to Meadow:
 
-```
+```javascript
 import Meadow from 'react-meadow';
-import * as materialUIMeadow from 'react-meadow/lib/materialUI';
+import * as materialUIComponents from 'react-meadow/lib/materialUI';
 
-function Example() {
+function MaterialUIMeadow({ fields, values, onReplaceInfoAtKeyPath }) {
   return (
-    <Meadow { ...materialUIMeadow } fields={ fields } values={ values } />
+    <Meadow { ...materialUIComponents } fields={ fields } values={ values } onReplaceInfoAtKeyPath={ onReplaceInfoAtKeyPath } />
   );
 }
 ```
