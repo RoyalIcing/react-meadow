@@ -30,7 +30,7 @@ export default React.createClass({
     // Choose first item by default.
     const { types } = this.props;
     if (types.length > 0) {
-      return types[0].id;
+      return types[0];
     }
   },
 
@@ -44,25 +44,15 @@ export default React.createClass({
   },
 
   onChangeType(newSelectedType) {
+    if (!!value && (value.type === newSelectedType)) {
+      return;
+    }
+
     const info = {
       type: newSelectedType
     };
 
-    const { onReplaceInfoAtKeyPath } = this.props;
-    if (onReplaceInfoAtKeyPath) {
-      onReplaceInfoAtKeyPath(info, []);
-    }
-  },
-
-  onChildFieldReplaceInfoAtKeyPath(info, keyPath) {
-    let selectedType = this.getSelectedType();
-
-    keyPath = [selectedType].concat(keyPath);
-
-    var onReplaceInfoAtKeyPath = this.props.onReplaceInfoAtKeyPath;
-    if (onReplaceInfoAtKeyPath) {
-      onReplaceInfoAtKeyPath(info, keyPath);
-    }
+    this.props.onReplaceInfoAtKeyPath(info, []);
   },
 
   render() {
@@ -81,11 +71,10 @@ export default React.createClass({
 
     types.some(typeID => {
       if (typeID === selectedType) {
-        selectedTypeSpec = typeSpecs[typeID];
-        return false;
+        selectedTypeSpec = typeSpecs[typeID];;
       }
 
-      return true;
+      return false;
     });
 
     const typeChoices = types.map(typeID => ({
@@ -106,15 +95,15 @@ export default React.createClass({
     let children = [ element ];
 
     // Show fields for the selected choice.
-    if (!!selectedTypeSpec && selectedTypeSpec.fields) {
-      children = children.concat(
+    if (!!selectedTypeSpec && !!selectedTypeSpec.fields) {
+      children.push(
         <Meadow key='fields'
           fields={ selectedTypeSpec.fields }
           values={ value }
           typeSpecs={ typeSpecs }
           fieldSpecs={ fieldSpecs }
-          onReplaceInfoAtKeyPath={ this.onChildFieldReplaceInfoAtKeyPath }
           fieldComponent={ Field }
+          onReplaceInfoAtKeyPath={ onReplaceInfoAtKeyPath }
         />
       );
     }
@@ -122,5 +111,5 @@ export default React.createClass({
     return (
       <div>{ children }</div>
     );
-  }
+  },
 });
