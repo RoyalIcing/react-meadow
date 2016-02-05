@@ -26,21 +26,9 @@ export default React.createClass({
     );
   },
 
-  getDefaultSelectedType() {
-    // Choose first item by default.
-    const { types } = this.props;
-    if (types.length > 0) {
-      return types[0];
-    }
-  },
-
   getSelectedType() {
     const { value } = this.props;
-    let selectedType = value ? value.type : null;
-    if (!selectedType) {
-      selectedType = this.getDefaultSelectedType();
-    }
-    return selectedType;
+    return value ? value.type : null;
   },
 
   onChangeType(newSelectedType) {
