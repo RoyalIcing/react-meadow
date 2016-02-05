@@ -30,6 +30,7 @@ function renderField({
   if (multiple) {
     return (
       <Multiple key={ id }
+        type={ type }
         title={ title }
         description={ description }
         values={ value }
@@ -93,6 +94,8 @@ function renderField({
         description={ description }
         inMultiple={ inMultiple }
         fieldComponent={ Field }
+        groupComponent={ groupComponent }
+        multipleComponent={ Multiple }
         onReplaceInfoAtKeyPath={ (info, additionalKeyPath = []) => {
           const keyPath = [id].concat(additionalKeyPath);
           onReplaceInfoAtKeyPath(info, keyPath);
@@ -221,6 +224,7 @@ const Meadow = React.createClass({
       typeSpecs,
       values,
       level,
+      typeChoiceField,
       title,
       description,
       required,
@@ -248,7 +252,7 @@ const Meadow = React.createClass({
     ));
 
     return (
-      <Group level={ level } title={ title } description={ description } required={ required } recommended={ recommended } inMultiple={ inMultiple }>
+      <Group level={ level } typeChoiceField={ typeChoiceField } title={ title } description={ description } required={ required } recommended={ recommended } inMultiple={ inMultiple }>
         { fieldElements }
       </Group>
     );

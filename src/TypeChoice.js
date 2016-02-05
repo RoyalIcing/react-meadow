@@ -9,7 +9,7 @@ export default React.createClass({
     return {
       types: [],
       onReplaceInfoAtKeyPath: null,
-      tabIndex: 0
+      tabIndex: 0,
     };
   },
 
@@ -49,7 +49,10 @@ export default React.createClass({
       value,
       typeSpecs,
       fieldSpecs,
+      level,
       fieldComponent: Field,
+      groupComponent,
+      multipleComponent,
       onReplaceInfoAtKeyPath,
       ...rest,
     } = this.props;
@@ -70,7 +73,7 @@ export default React.createClass({
       title: typeSpecs[typeID].title,
     }));
 
-    let element = (
+    const typeChoiceField = (
       <Field key='typeChoice'
         type='choice'
         value={ selectedType }
@@ -80,24 +83,19 @@ export default React.createClass({
       />
     );
 
-    let children = [ element ];
-
-    // Show fields for the selected choice.
-    if (!!selectedTypeSpec && !!selectedTypeSpec.fields) {
-      children.push(
-        <Meadow key='fields'
-          fields={ selectedTypeSpec.fields }
-          values={ value }
-          typeSpecs={ typeSpecs }
-          fieldSpecs={ fieldSpecs }
-          fieldComponent={ Field }
-          onReplaceInfoAtKeyPath={ onReplaceInfoAtKeyPath }
-        />
-      );
-    }
-
     return (
-      <div>{ children }</div>
+      <Meadow key='fields'
+        fields={ !!selectedTypeSpec ? selectedTypeSpec.fields : [] }
+        values={ value }
+        typeSpecs={ typeSpecs }
+        fieldSpecs={ fieldSpecs }
+        level={ level + 1 }
+        typeChoiceField={ typeChoiceField }
+        fieldComponent={ Field }
+        groupComponent={ groupComponent }
+        multipleComponent={ multipleComponent }
+        onReplaceInfoAtKeyPath={ onReplaceInfoAtKeyPath }
+      />
     );
   },
 });
