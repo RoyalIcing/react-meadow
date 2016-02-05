@@ -32,12 +32,14 @@ export default React.createClass({
   },
 
   onChangeType(newSelectedType) {
+    const { value } = this.props;
+
     if (!!value && (value.type === newSelectedType)) {
       return;
     }
 
     const info = {
-      type: newSelectedType
+      type: newSelectedType,
     };
 
     this.props.onReplaceInfoAtKeyPath(info, []);
