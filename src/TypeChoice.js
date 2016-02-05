@@ -81,6 +81,7 @@ export default React.createClass({
         value={ selectedType }
         choices={ typeChoices }
         { ...rest }
+        title='Type'
         onChangeValue={ this.onChangeType }
       />
     );
