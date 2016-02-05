@@ -6,166 +6,185 @@ import ChoiceField from './ChoiceField';
 import TypeChoice from './TypeChoice';
 import resolveFields from './utils/resolveFields';
 
-function renderField({
-  field,
-  fieldSpecs,
-  typeSpecs,
-  value,
-  level,
-  inMultiple,
-  fieldComponent: Field,
-  groupComponent,
-  multipleComponent: Multiple,
-  onReplaceInfoAtKeyPath,
-}) {
-  const {
-    type,
-    id,
-    multiple,
-    title,
-    description,
-    ...rest,
-  } = field;
+const MeadowItem = React.createClass({
+  shouldComponentUpdate(nextProps, nextState) {
+    const currentProps = this.props;
 
-  if (multiple) {
+    return false;
     return (
-      <Multiple key={ id }
-        type={ type }
-        title={ title }
-        description={ description }
-        values={ value }
-        inMultiple={ inMultiple }
-        itemComponent={
-          ({ value, index, title, description }) => renderField({
-            field: {
-              type,
-              id: index,
-              value,
-              ...rest,
-            },
-            fieldSpecs,
-            typeSpecs,
-            value,
-            level,
-            title,
-            description,
-            inMultiple: true,
-            fieldComponent: Field,
-            groupComponent,
-            multipleComponent: Multiple,
-            onReplaceInfoAtKeyPath: (info, additionalKeyPath = []) => {
-              const keyPath = [id].concat(additionalKeyPath);
-              onReplaceInfoAtKeyPath(info, keyPath);
-            },
-          })
-        }
-      />
+      nextProps.field !== currentProps.field ||
+      nextProps.fieldSpecs !== currentProps.fieldSpecs ||
+      nextProps.typeSpecs !== currentProps.typeSpecs ||
+      nextProps.value !== currentProps.value ||
+      nextProps.inMultiple != currentProps.inMultiple ||
+      nextProps.fieldComponent !== currentProps.fieldComponent ||
+      nextProps.groupComponent !== currentProps.groupComponent ||
+      nextProps.multipleComponent !== currentProps.multipleComponent ||
+      nextProps.onReplaceInfoAtKeyPath !== currentProps.onReplaceInfoAtKeyPath
     );
-  }
-  else if (type === 'group') {
-    return (
-      <Meadow key={ id }
-        { ...rest }
-        values={ value }
-        fieldSpecs={ fieldSpecs }
-        typeSpecs={ typeSpecs }
-        title={ title }
-        description={ description }
-        inMultiple={ inMultiple }
-        fieldComponent={ Field }
-        groupComponent={ groupComponent }
-        multipleComponent={ Multiple }
-        level={ level + 1 }
-        onReplaceInfoAtKeyPath={ (info, additionalKeyPath = []) => {
-          const keyPath = [id].concat(additionalKeyPath);
-          onReplaceInfoAtKeyPath(info, keyPath);
-        } }
-      />
-    );
-  }
-  else if (type === 'typeChoice') {
-    return (
-      <TypeChoice key={ id }
-        { ...rest }
-        value={ value }
-        fieldSpecs={ fieldSpecs }
-        typeSpecs={ typeSpecs }
-        title={ title }
-        description={ description }
-        inMultiple={ inMultiple }
-        fieldComponent={ Field }
-        groupComponent={ groupComponent }
-        multipleComponent={ Multiple }
-        onReplaceInfoAtKeyPath={ (info, additionalKeyPath = []) => {
-          const keyPath = [id].concat(additionalKeyPath);
-          onReplaceInfoAtKeyPath(info, keyPath);
-        } }
-      />
-    );
-  }
-  else if (type === 'choice') {
-    return (
-      <ChoiceField key={ id }
-        { ...rest }
-        type={ type }
-        value={ value }
-        title={ title }
-        description={ description }
-        inMultiple={ inMultiple }
-        fieldComponent={ Field }
-        onChangeValue={ newValue => {
-          onReplaceInfoAtKeyPath(newValue, [id]);
-        } }
-      />
-    );
-  }
-  else if (type === 'boolean') {
-    return (
-      <Field key={ id }
-        { ...rest }
-        type={ type }
-        value={ value }
-        title={ title }
-        description={ description }
-        inMultiple={ inMultiple }
-        onChangeValue={ newValue => {
-          onReplaceInfoAtKeyPath(newValue, [id]);
-        } }
-      />
-    );
-  }
-  else {
-    let props = {
-      key: id,
-      type,
-      title,
-      description,
+  },
+
+  render() {
+    const {
+      field: {
+        type,
+        id,
+        multiple,
+        title,
+        description,
+        ...rest,
+      },
+      fieldSpecs,
+      typeSpecs,
+      value,
+      level,
       inMultiple,
       fieldComponent: Field,
-    };
+      groupComponent,
+      multipleComponent: Multiple,
+      onReplaceInfoAtKeyPath,
+    } = this.props;
 
     if (multiple) {
-      props.values = value;
-      props.onChangeValueAtIndex = (newValue, valueIndex) => {
-        onReplaceInfoAtKeyPath(newValue, [id, valueIndex]);
-      };
-
       return (
-        <TextualFieldMultiple { ...props } { ...rest } />
+        <Multiple key={ id }
+          type={ type }
+          title={ title }
+          description={ description }
+          values={ value }
+          inMultiple={ inMultiple }
+          itemComponent={ ({ value, index, title, description }) => (
+            <MeadowItem
+              field={{
+                type,
+                id: index,
+                value,
+                ...rest,
+              }}
+              fieldSpecs={ fieldSpecs }
+              typeSpecs={ typeSpecs }
+              value={ value }
+              level={ level }
+              title={ title }
+              description={ description }
+              inMultiple
+              fieldComponent={ Field }
+              groupComponent={ groupComponent }
+              multipleComponent={ Multiple }
+              onReplaceInfoAtKeyPath={ (info, additionalKeyPath = []) => {
+                const keyPath = [id].concat(additionalKeyPath);
+                onReplaceInfoAtKeyPath(info, keyPath);
+              } }
+            />
+          ) }
+        />
+      );
+    }
+    else if (type === 'group') {
+      return (
+        <Meadow key={ id }
+          { ...rest }
+          values={ value }
+          fieldSpecs={ fieldSpecs }
+          typeSpecs={ typeSpecs }
+          title={ title }
+          description={ description }
+          inMultiple={ inMultiple }
+          fieldComponent={ Field }
+          groupComponent={ groupComponent }
+          multipleComponent={ Multiple }
+          level={ level + 1 }
+          onReplaceInfoAtKeyPath={ (info, additionalKeyPath = []) => {
+            const keyPath = [id].concat(additionalKeyPath);
+            onReplaceInfoAtKeyPath(info, keyPath);
+          } }
+        />
+      );
+    }
+    else if (type === 'typeChoice') {
+      return (
+        <TypeChoice key={ id }
+          { ...rest }
+          value={ value }
+          fieldSpecs={ fieldSpecs }
+          typeSpecs={ typeSpecs }
+          title={ title }
+          description={ description }
+          inMultiple={ inMultiple }
+          fieldComponent={ Field }
+          groupComponent={ groupComponent }
+          multipleComponent={ Multiple }
+          onReplaceInfoAtKeyPath={ (info, additionalKeyPath = []) => {
+            const keyPath = [id].concat(additionalKeyPath);
+            onReplaceInfoAtKeyPath(info, keyPath);
+          } }
+        />
+      );
+    }
+    else if (type === 'choice') {
+      return (
+        <ChoiceField key={ id }
+          { ...rest }
+          type={ type }
+          value={ value }
+          title={ title }
+          description={ description }
+          inMultiple={ inMultiple }
+          fieldComponent={ Field }
+          onChangeValue={ newValue => {
+            onReplaceInfoAtKeyPath(newValue, [id]);
+          } }
+        />
+      );
+    }
+    else if (type === 'boolean') {
+      return (
+        <Field key={ id }
+          { ...rest }
+          type={ type }
+          value={ value }
+          title={ title }
+          description={ description }
+          inMultiple={ inMultiple }
+          onChangeValue={ newValue => {
+            onReplaceInfoAtKeyPath(newValue, [id]);
+          } }
+        />
       );
     }
     else {
-      props.value = value;
-      props.onChangeValue = (newValue) => {
-        onReplaceInfoAtKeyPath(newValue, [id]);
+      let props = {
+        key: id,
+        type,
+        title,
+        description,
+        inMultiple,
+        fieldComponent: Field,
       };
 
-      return (
-        <TextualField { ...props } { ...rest } />
-      );
+      if (multiple) {
+        props.values = value;
+        props.onChangeValueAtIndex = (newValue, valueIndex) => {
+          onReplaceInfoAtKeyPath(newValue, [id, valueIndex]);
+        };
+
+        return (
+          <TextualFieldMultiple { ...props } { ...rest } />
+        );
+      }
+      else {
+        props.value = value;
+        props.onChangeValue = (newValue) => {
+          onReplaceInfoAtKeyPath(newValue, [id]);
+        };
+
+        return (
+          <TextualField { ...props } { ...rest } />
+        );
+      }
     }
-  }
-}
+  },
+});
 
 const Meadow = React.createClass({
   getDefaultProps() {
@@ -238,17 +257,17 @@ const Meadow = React.createClass({
 
     const resolvedFields = resolveFields({ fields, fieldSpecs });
     const fieldElements = resolvedFields.map(field => (
-      renderField({
-        field,
-        fieldSpecs,
-        typeSpecs,
-        value: values ? values[field.id] : undefined,
-        level,
-        fieldComponent,
-        groupComponent: Group,
-        multipleComponent,
-        onReplaceInfoAtKeyPath,
-      })
+      <MeadowItem
+        field={ field }
+        fieldSpecs={ fieldSpecs }
+        typeSpecs={ typeSpecs }
+        value={ values ? values[field.id] : undefined }
+        level={ level }
+        fieldComponent={ fieldComponent }
+        groupComponent={ Group }
+        multipleComponent={ multipleComponent }
+        onReplaceInfoAtKeyPath={ onReplaceInfoAtKeyPath }
+      />
     ));
 
     return (
