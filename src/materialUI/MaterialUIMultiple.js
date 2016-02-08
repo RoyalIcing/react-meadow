@@ -25,7 +25,7 @@ export default React.createClass({
 
     const items = values.map((value, index) => (
       <div key={ index }>
-        <Item value={ value } index={ index } title={ title } description={ description } />
+        <Item value={ value } index={ index } />
         <FlatButton label='Remove' onTouchTap={ () => onRemoveAtIndex(index) } />
         <Divider />
       </div>
