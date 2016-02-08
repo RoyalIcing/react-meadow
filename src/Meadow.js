@@ -279,6 +279,7 @@ const Meadow = React.createClass({
     const resolvedFields = resolveFields({ fields, fieldSpecs });
     const fieldElements = resolvedFields.map(field => (
       <MeadowItem
+        key={ field.id }
         field={ field }
         fieldSpecs={ fieldSpecs }
         typeSpecs={ typeSpecs }
