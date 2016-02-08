@@ -240,21 +240,24 @@ const Meadow = React.createClass({
     };
   },
 
-  shouldComponentUpdate(nextProps, nextState) {
+  getInitialState() {
+    const { fields, fieldSpecs } = this.props;
+    return {
+      resolvedFields: resolveFields({ fields, fieldSpecs }),
+    };
+  },
+
+  componentWillReceiveProps(nextProps) {
     const currentProps = this.props;
 
-    return (
+    if (
       nextProps.fields !== currentProps.fields ||
-      nextProps.fieldSpecs !== currentProps.fieldSpecs ||
-      nextProps.typeSpecs !== currentProps.typeSpecs ||
-      nextProps.values !== currentProps.values ||
-      nextProps.title != currentProps.title ||
-      nextProps.description != currentProps.description ||
-      nextProps.fieldComponent !== currentProps.fieldComponent ||
-      nextProps.groupComponent !== currentProps.groupComponent ||
-      nextProps.multipleComponent !== currentProps.multipleComponent ||
-      nextProps.onReplaceInfoAtKeyPath !== currentProps.onReplaceInfoAtKeyPath
-    );
+      nextProps.fieldSpecs !== currentProps.fieldSpecs
+    ) {
+      this.setState({
+        resolvedFields: resolveFields({ fields: nextProps.fields, fieldSpecs: nextProps.fieldSpecs }),
+      });
+    }
   },
 
   render() {
@@ -276,8 +279,7 @@ const Meadow = React.createClass({
       onReplaceInfoAtKeyPath,
     } = this.props;
 
-    const resolvedFields = resolveFields({ fields, fieldSpecs });
-    const fieldElements = resolvedFields.map(field => (
+    const fieldElements = this.state.resolvedFields.map(field => (
       <MeadowItem
         key={ field.id }
         field={ field }
@@ -297,7 +299,7 @@ const Meadow = React.createClass({
         { fieldElements }
       </Group>
     );
-  }
+  },
 });
 
 export default Meadow;
