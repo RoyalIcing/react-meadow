@@ -48,7 +48,7 @@ const MeadowItem = React.createClass({
   },
 
   onAdd() {
-    const newIndex = value.length;
+    const newIndex = this.props.value.length;
     this.props.onReplaceInfoAtKeyPath({}, this.getKeyPath([newIndex]));
   },
 
