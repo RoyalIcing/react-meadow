@@ -233,7 +233,7 @@ const Meadow = React.createClass({
       values: PropTypes.object.isRequired,
       fieldComponent: PropTypes.object.isRequired,
       groupComponent: PropTypes.object.isRequired,
-      //multipleComponent: PropTypes.object.isRequired,
+      multipleComponent: PropTypes.object.isRequired,
       title: PropTypes.string,
       description: PropTypes.string,
       onReplaceInfoAtKeyPath: PropTypes.func.isRequired,
