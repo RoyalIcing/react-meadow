@@ -64,7 +64,7 @@ export default React.createClass({
 
     types.some(typeID => {
       if (typeID === selectedType) {
-        selectedTypeSpec = typeSpecs[typeID];;
+        selectedTypeSpec = typeSpecs[typeID];
       }
 
       return false;
