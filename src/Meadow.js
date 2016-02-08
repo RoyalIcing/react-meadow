@@ -10,7 +10,6 @@ const MeadowItem = React.createClass({
   shouldComponentUpdate(nextProps, nextState) {
     const currentProps = this.props;
 
-    return false;
     return (
       nextProps.field !== currentProps.field ||
       nextProps.fieldSpecs !== currentProps.fieldSpecs ||
