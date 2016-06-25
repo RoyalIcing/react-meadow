@@ -90,19 +90,34 @@ export default ExampleForm = React.createClass({
 
 The particular components for rendering fields, groups, and multiples are all customizable. You can use a pre-existing UI library:
 
-- Native Web: `react-meadow/lib/defaultComponents`
+- Vanilla Web: `react-meadow/lib/defaultComponents`
 - Material UI: `react-meadow/lib/materialUI`
 - Bootstrap: to come
 
 Then pass the result of this to Meadow:
 
+### Vanilla Web
+
+```javascript
+import Meadow from 'react-meadow';
+import * as webComponents from 'react-meadow/lib/defaultComponents';
+
+function WebMeadow(props) {
+  return (
+    <Meadow { ...webComponents } { ...props } />
+  );
+}
+```
+
+### Material UI
+
 ```javascript
 import Meadow from 'react-meadow';
 import * as materialUIComponents from 'react-meadow/lib/materialUI';
 
-function MaterialUIMeadow({ fields, values, onReplaceInfoAtKeyPath }) {
+function MaterialUIMeadow(props) {
   return (
-    <Meadow { ...materialUIComponents } fields={ fields } values={ values } onReplaceInfoAtKeyPath={ onReplaceInfoAtKeyPath } />
+    <Meadow { ...materialUIComponents } { ...props } />
   );
 }
 ```
