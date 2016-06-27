@@ -86,6 +86,8 @@ export default React.createClass({
       />
     );
 
+    console.log('typeChoiceField', typeChoiceField)
+
     return (
       <Meadow key='fields'
         fields={ !!selectedTypeSpec ? selectedTypeSpec.fields : [] }

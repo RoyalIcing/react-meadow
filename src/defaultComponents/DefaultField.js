@@ -1,7 +1,10 @@
 import React, { PropTypes } from 'react';
+import defaultStyler from 'react-sow/default';
 
 function Input({
-  type, value, onChangeValue, long, choices, ...rest
+  type, value, onChangeValue, long, choices,
+  styler = defaultStyler,
+  ...rest
 }) {
   const onChange = (event) => {
     const { target } = event;
@@ -15,12 +18,12 @@ function Input({
 
   if (type === 'boolean') {
     return (
-      <input type='checkbox' checked={ value } { ...rest } onChange={ onChange } />
+      <input type='checkbox' checked={ value } { ...rest } { ...styler({ type }) } onChange={ onChange } />
     );
   }
   else if (type === 'choice') {
     return (
-      <select value={ value } { ...rest } onChange={ onChange }>
+      <select value={ value } { ...rest } { ...styler({ type }) } onChange={ onChange }>
         { choices.map(choice =>
           <option key={ choice.id } value={ choice.id }>{ choice.title }</option>
         ) }
@@ -30,18 +33,19 @@ function Input({
   else {
     if (long) {
       return (
-        <textarea value={ value } rows={ 6 } { ...rest } onChange={ onChange } />
+        <textarea value={ value } rows={ 6 } { ...rest } { ...styler({ type }) } onChange={ onChange } />
       );
     } else {
       return (
-        <input type={ type } value={ value } { ...rest } onChange={ onChange } />
+        <input type={ type } value={ value } { ...rest } { ...styler({ type }) } onChange={ onChange } />
       );
     }
   }
 }
 
 function Label({
-  title, description, children, required = false, recommended = false, showAfterChildren = false
+  type, title, description, children, required = false, recommended = false, showAfterChildren = false,
+  styler = defaultStyler
 }) {
   if (required) {
 		title += ' (required)'
@@ -66,6 +70,8 @@ function Label({
 		);
 	}
 
+  children = React.Children.toArray(children);
+
   children = (showAfterChildren) ? (
     children.concat(elements)
   ) : (
@@ -73,7 +79,7 @@ function Label({
   );
 
 	return (
-    <label>{ children }</label>
+    <label { ...styler({ type, required }) }>{ children }</label>
 	);
 }
 
@@ -85,18 +91,23 @@ export default function Field({
   recommended,
   tabIndex,
   onChangeValue,
+  inputStyler,
+  labelStyler,
   ...rest
 }) {
   return (
     <Label
+      type={ type }
       title={ title }
       description={ description }
       required={ required }
       recommended={ recommended }
       showAfterChildren={ type === 'boolean' }
+      styler={ labelStyler }
     >
       <Input
         type={ type }
+        styler={ inputStyler }
         { ...rest }
         onChangeValue={ onChangeValue }
       />
