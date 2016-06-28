@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import defaultStyler from 'react-sow/default';
 
 export default React.createClass({
   displayName: 'Meadow.Web.Multiple',
@@ -15,24 +16,35 @@ export default React.createClass({
   },
 
   render() {
-    const { values, title, description, level, itemComponent: Item, onAdd, onRemoveAtIndex } = this.props;
+    const { styler = defaultStyler, values, title, description, level, itemComponent: Item, onAdd, onRemoveAtIndex } = this.props;
+    const {
+      list: listStyler = defaultStyler,
+      item: itemStyler = defaultStyler,
+      removeButton: removeButtonStyler = defaultStyler,
+      addButton: addButtonStyler = defaultStyler
+    } = styler;
+    const {
+      content: itemContentStyler = defaultStyler
+    } = itemStyler;
 
     const items = values.map((value, index) => (
-      <li key={ index }>
-        <Item value={ value } index={ index } />
-        <button children='Remove' onTouchTap={ () => onRemoveAtIndex(index) } />
+      <li key={ index } { ...itemStyler() }>
+        <div { ...itemContentStyler() }>
+          <Item value={ value } index={ index } />
+        </div>
+        <button children='Remove' { ...removeButtonStyler() } onTouchTap={ () => onRemoveAtIndex(index) } />
       </li>
     ));
 
     return (
-      <div>
+      <div { ...styler() }>
         <div>{ title }</div>
         <div>{ description }</div>
-        <ol>
+        <ol { ...listStyler({ level }) }>
           { items }
         </ol>
         <div>
-          <button children='Add' onTouchTap={ () => onAdd() } />
+          <button children='Add' { ...addButtonStyler() } onTouchTap={ () => onAdd() } />
         </div>
       </div>
     );

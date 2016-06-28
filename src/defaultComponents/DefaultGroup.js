@@ -1,10 +1,14 @@
 import React, { PropTypes } from 'react';
+import defaultStyler from 'react-sow/default';
 
-export default function Group({ typeChoiceField, title, description, level, inMultiple = false, children }) {
-  console.log('group children', children)
+export default function Group({ styler = defaultStyler, typeChoiceField, title, description, level, inMultiple = false, children }) {
+  const {
+    header: headerStyler = defaultStyler
+  } = styler;
+
   return (
-    <div>
-      <div>
+    <div { ...styler({ level }) }>
+      <div { ...headerStyler({ level }) }>
         { title }
         { typeChoiceField }
       </div>

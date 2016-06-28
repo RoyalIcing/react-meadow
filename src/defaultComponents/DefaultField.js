@@ -47,6 +47,11 @@ function Label({
   type, title, description, children, required = false, recommended = false, showAfterChildren = false,
   styler = defaultStyler
 }) {
+  const { 
+    title: titleStyler = defaultStyler,
+    description: descriptionStyler = defaultStyler 
+  } = styler;
+
   if (required) {
 		title += ' (required)'
 	}
@@ -57,14 +62,14 @@ function Label({
   let elements = [];
 
 	elements.push(
-		<span key='title'>
+		<span { ...titleStyler({ type }) } key='title'>
       { title }
     </span>
 	);
 
 	if (description) {
     elements.push(
-			<span key='description'>
+			<span { ...descriptionStyler({ type }) } key='description'>
         { description }
       </span>
 		);
