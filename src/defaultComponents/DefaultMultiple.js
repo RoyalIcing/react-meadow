@@ -18,6 +18,8 @@ export default React.createClass({
   render() {
     const { keyPath, styler = defaultStyler, values, title, description, level, itemComponent: Item, onAdd, onRemoveAtIndex } = this.props;
     const {
+      title: titleStyler = defaultStyler,
+      description: descriptionStyler = defaultStyler,
       list: listStyler = defaultStyler,
       item: itemStyler = defaultStyler,
       removeButton: removeButtonStyler = defaultStyler,
@@ -38,8 +40,8 @@ export default React.createClass({
 
     return (
       <div { ...styler() }>
-        <div>{ title }</div>
-        <div>{ description }</div>
+        <div { ...titleStyler() }>{ title }</div>
+        <div { ...descriptionStyler() }>{ description }</div>
         <ol { ...listStyler({ level }) }>
           { items }
         </ol>
