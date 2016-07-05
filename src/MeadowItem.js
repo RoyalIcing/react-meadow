@@ -24,8 +24,14 @@ const MeadowItem = React.createClass({
 
   onAdd() {
     const { keyPath, value, onReplaceInfoAtKeyPath } = this.props;
-    const newIndex = value.length;
-    onReplaceInfoAtKeyPath({}, keyPath.concat(newIndex));
+
+    if (value) {
+      const newIndex = value.length;
+      onReplaceInfoAtKeyPath({}, keyPath.concat(newIndex));
+    }
+    else {
+      onReplaceInfoAtKeyPath([{}], keyPath);
+    }
   },
 
   onRemoveAtIndex(index) {
@@ -67,6 +73,7 @@ const MeadowItem = React.createClass({
         <Multiple key={ id }
           keyPath={ keyPath }
           type={ type }
+          level={ level }
           title={ title }
           description={ description }
           values={ value || [] }
