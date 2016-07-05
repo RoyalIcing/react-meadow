@@ -34,19 +34,19 @@ export default React.createClass({
         <div { ...itemContentStyler() }>
           <Item value={ value } index={ index } />
         </div>
-        <button children='Remove' { ...removeButtonStyler() } onTouchTap={ () => onRemoveAtIndex(index) } />
+        <button { ...removeButtonStyler({ children: 'Remove' }) } onClick={ () => onRemoveAtIndex(index) } />
       </li>
     ));
 
     return (
       <div { ...styler() }>
-        <div { ...titleStyler() }>{ title }</div>
-        <div { ...descriptionStyler() }>{ description }</div>
+        { !!title && <div { ...titleStyler({ children: title }) } /> }
+        { !!description && <div { ...descriptionStyler({ children: description }) } /> }
         <ol { ...listStyler({ level }) }>
           { items }
         </ol>
         <div>
-          <button children='Add' { ...addButtonStyler() } onTouchTap={ () => onAdd() } />
+          <button { ...addButtonStyler({ children: 'Add' }) } onClick={ () => onAdd() } />
         </div>
       </div>
     );

@@ -1,18 +1,24 @@
 import React, { PropTypes } from 'react';
 import defaultStyler from 'react-sow/default';
 
-export default function Group({ styler = defaultStyler, typeChoiceField, title, description, level, inMultiple = false, children }) {
+export default function Group({ styler = defaultStyler, keyPath, typeChoiceField, title, description, level, inMultiple = false, children }) {
   const {
-    header: headerStyler = defaultStyler
+    header: headerStyler = defaultStyler,
+    title: titleStyler = defaultStyler,
+    description: descriptionStyler = defaultStyler,
+    items: itemsStyler = defaultStyler
   } = styler;
 
   return (
-    <div { ...styler({ level }) }>
-      <div { ...headerStyler({ level }) }>
-        { title }
+    <div { ...styler({ keyPath, level }) }>
+      <div { ...headerStyler({ keyPath, level }) }>
+        { !!title && <div { ...titleStyler({ keyPath, children: title }) } /> }
+        { !!description && <div { ...descriptionStyler({ children: description }) } /> }
         { typeChoiceField }
       </div>
-      { children }
+      <div { ...itemsStyler({ keyPath, level }) }>
+        { children }
+      </div>
     </div>
   )
 }
