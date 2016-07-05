@@ -1,6 +1,6 @@
 {
   "name": "react-meadow",
-  "version": "0.2.0b1",
+  "version": "0.2.0b2",
   "description": "Create nested editable fields with just JSON",
   "main": "index.js",
   "scripts": {
@@ -38,6 +38,6 @@
     "react-dom": "^15.1.0"
   },
   "dependencies": {
-    "react-sow": "^0.2.2"
+    "react-sow": "^0.3.0-b1"
   }
 }
