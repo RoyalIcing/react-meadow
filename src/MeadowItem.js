@@ -22,30 +22,6 @@ const MeadowItem = React.createClass({
     );
   },
 
-  getKeyPath(additionalKeyPath) {
-    const { field, multipleIndex } = this.props;
-
-    let keyPath = [];
-
-    if (typeof multipleIndex !== 'undefined') {
-      keyPath.push(multipleIndex);
-    }
-    else {
-      keyPath.push(field.id);
-    }
-
-    if (!!additionalKeyPath) {
-      return keyPath.concat(additionalKeyPath);
-    }
-    else {
-      return keyPath;
-    }
-  },
-
-  onReplaceInfoAtKeyPath(info, additionalKeyPath = []) {
-    this.props.onReplaceInfoAtKeyPath(info, this.getKeyPath(additionalKeyPath));
-  },
-
   onAdd() {
     const { keyPath, value, onReplaceInfoAtKeyPath } = this.props;
     const newIndex = value.length;
@@ -83,9 +59,8 @@ const MeadowItem = React.createClass({
       fieldComponent: Field,
       groupComponent,
       multipleComponent: Multiple,
+      onReplaceInfoAtKeyPath,
     } = this.props;
-
-    console.log('type', type, 'keyPath', keyPath, 'field', this.props.field)
 
     if (multiple && !ignoreMultiple) {
       return (
@@ -112,7 +87,7 @@ const MeadowItem = React.createClass({
               fieldComponent={ Field }
               groupComponent={ groupComponent }
               multipleComponent={ Multiple }
-              onReplaceInfoAtKeyPath={ this.onReplaceInfoAtKeyPath }
+              onReplaceInfoAtKeyPath={ onReplaceInfoAtKeyPath }
             />
           ) }
           onAdd={ this.onAdd }
@@ -121,7 +96,6 @@ const MeadowItem = React.createClass({
       );
     }
     else if (type === 'group') {
-      console.log('GROUP', keyPath)
       return (
         <Meadow key={ id }
           { ...rest }
@@ -136,7 +110,7 @@ const MeadowItem = React.createClass({
           groupComponent={ groupComponent }
           multipleComponent={ Multiple }
           level={ level + 1 }
-          onReplaceInfoAtKeyPath={ this.onReplaceInfoAtKeyPath }
+          onReplaceInfoAtKeyPath={ onReplaceInfoAtKeyPath }
         />
       );
     }
@@ -154,7 +128,7 @@ const MeadowItem = React.createClass({
           fieldComponent={ Field }
           groupComponent={ groupComponent }
           multipleComponent={ Multiple }
-          onReplaceInfoAtKeyPath={ this.onReplaceInfoAtKeyPath }
+          onReplaceInfoAtKeyPath={ onReplaceInfoAtKeyPath }
         />
       );
     }

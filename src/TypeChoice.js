@@ -42,7 +42,8 @@ export default React.createClass({
       type: newSelectedType,
     };
 
-    this.props.onReplaceInfoAtKeyPath(info, []);
+    const { keyPath, onReplaceInfoAtKeyPath } = this.props;
+    onReplaceInfoAtKeyPath(info, keyPath);
   },
 
   render() {
