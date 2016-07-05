@@ -16,7 +16,7 @@ export default React.createClass({
   },
 
   render() {
-    const { styler = defaultStyler, values, title, description, level, itemComponent: Item, onAdd, onRemoveAtIndex } = this.props;
+    const { keyPath, styler = defaultStyler, values, title, description, level, itemComponent: Item, onAdd, onRemoveAtIndex } = this.props;
     const {
       list: listStyler = defaultStyler,
       item: itemStyler = defaultStyler,

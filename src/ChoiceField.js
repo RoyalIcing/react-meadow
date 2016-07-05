@@ -26,7 +26,7 @@ export default React.createClass({
   },
 
   render() {
-    const { choices, fieldComponent: Field } = this.props;
+    const { keyPath, choices, fieldComponent: Field } = this.props;
 
     // Expand just a value into { id: value, title: value };
     const adjustedChoices = choices.map(choice => {
@@ -40,6 +40,7 @@ export default React.createClass({
 
     return (
       <Field { ...this.props }
+        keyPath={ keyPath }
         value={ this.getSelectedChoiceID() }
         choices={ adjustedChoices }
       />

@@ -6,6 +6,7 @@ import resolveFields from './utils/resolveFields';
 const Meadow = React.createClass({
   getDefaultProps() {
     return {
+      keyPath: [],
       groupComponent: 'div',
       level: 0,
     };
@@ -13,6 +14,10 @@ const Meadow = React.createClass({
 
   getPropTypes() {
     return {
+      keyPath: PropTypes.arrayOf(PropTypes.oneOf([
+        PropTypes.string.isRequired,
+        PropTypes.number.isRequired
+      ])).isRequired,
       fields: PropTypes.arrayOf(PropTypes.oneOf([
         PropTypes.string.isRequired,
         PropTypes.shape({
@@ -71,6 +76,7 @@ const Meadow = React.createClass({
 
   render() {
     const {
+      keyPath,
       fields,
       fieldSpecs,
       typeSpecs,
@@ -88,16 +94,18 @@ const Meadow = React.createClass({
       onReplaceInfoAtKeyPath,
     } = this.props;
 
-    console.log(this.props, 'this.state.resolvedFields', this.state.resolvedFields)
+    console.log('<Meadow> keyPath', keyPath)
 
-    const fieldElements = this.state.resolvedFields.map(field => (
+    const fieldElements = this.state.resolvedFields.map((field) => (
       <MeadowItem
         key={ field.id }
+        keyPath={ keyPath.concat(field.id) }
         field={ field }
         fieldSpecs={ fieldSpecs }
         typeSpecs={ typeSpecs }
         value={ values ? values[field.id] : undefined }
         level={ level }
+        Meadow={ Meadow }
         fieldComponent={ fieldComponent }
         groupComponent={ Group }
         multipleComponent={ multipleComponent }

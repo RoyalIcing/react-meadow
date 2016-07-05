@@ -47,6 +47,7 @@ export default React.createClass({
 
   render() {
     const {
+      keyPath,
       types,
       value,
       typeSpecs,
@@ -77,6 +78,7 @@ export default React.createClass({
 
     const typeChoiceField = (
       <Field key='typeChoice'
+        keyPath={ keyPath }
         type='choice'
         value={ selectedType }
         choices={ typeChoices }
@@ -90,6 +92,7 @@ export default React.createClass({
 
     return (
       <Meadow key='fields'
+        keyPath={ keyPath }
         fields={ !!selectedTypeSpec ? selectedTypeSpec.fields : [] }
         values={ value }
         typeSpecs={ typeSpecs }

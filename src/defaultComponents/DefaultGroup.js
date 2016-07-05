@@ -16,3 +16,5 @@ export default function Group({ styler = defaultStyler, typeChoiceField, title, 
     </div>
   )
 }
+
+Group.displayName = 'Meadow.Web.Group'

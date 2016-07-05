@@ -2,7 +2,8 @@ import React, { PropTypes } from 'react';
 import defaultStyler from 'react-sow/default';
 
 function Input({
-  type, value, onChangeValue, long, choices,
+  type, value, keyPath, onChangeValue, long, choices,
+  pills = false,
   styler = defaultStyler,
   ...rest
 }) {
@@ -18,33 +19,50 @@ function Input({
 
   if (type === 'boolean') {
     return (
-      <input type='checkbox' checked={ value } { ...rest } { ...styler({ type }) } onChange={ onChange } />
+      <input type='checkbox' checked={ value } { ...rest } { ...styler({ type, keyPath }) } onChange={ onChange } />
     );
   }
   else if (type === 'choice') {
-    return (
-      <select value={ value } { ...rest } { ...styler({ type }) } onChange={ onChange }>
-        { choices.map(choice =>
-          <option key={ choice.id } value={ choice.id }>{ choice.title }</option>
-        ) }
-      </select>
-    );
+    if (pills) {
+      return (
+        <div { ...styler({ type, keyPath, pills: true }) }>
+          { choices.map(({ id, title }) =>
+            <button key={ id }
+              value={ id }
+              onClick={ onChange }
+              { ...(styler.choicePill || defaultStyler)({ type, keyPath, id, selected: (value == id) }) }
+            >{
+              title
+            }</button>
+          ) }
+        </div>
+      )
+    }
+    else {
+      return (
+        <select value={ value } { ...rest } { ...styler({ type, keyPath, pills: false }) } onChange={ onChange }>
+          { choices.map((choice) =>
+            <option key={ choice.id } value={ choice.id }>{ choice.title }</option>
+          ) }
+        </select>
+      );
+    }
   }
   else {
     if (long) {
       return (
-        <textarea value={ value } rows={ 6 } { ...rest } { ...styler({ type }) } onChange={ onChange } />
+        <textarea value={ value } rows={ 6 } { ...rest } { ...styler({ type, keyPath }) } onChange={ onChange } />
       );
     } else {
       return (
-        <input type={ type } value={ value } { ...rest } { ...styler({ type }) } onChange={ onChange } />
+        <input type={ type } value={ value } { ...rest } { ...styler({ type, keyPath }) } onChange={ onChange } />
       );
     }
   }
 }
 
 function Label({
-  type, title, description, children, required = false, recommended = false, showAfterChildren = false,
+  type, keyPath, title, description, children, required = false, recommended = false, showAfterChildren = false,
   styler = defaultStyler
 }) {
   const { 
@@ -62,14 +80,14 @@ function Label({
   let elements = [];
 
 	elements.push(
-		<span { ...titleStyler({ type }) } key='title'>
+		<span { ...titleStyler({ type, keyPath }) } key='title'>
       { title }
     </span>
 	);
 
 	if (description) {
     elements.push(
-			<span { ...descriptionStyler({ type }) } key='description'>
+			<span { ...descriptionStyler({ type, keyPath }) } key='description'>
         { description }
       </span>
 		);
@@ -84,12 +102,13 @@ function Label({
   );
 
 	return (
-    <label { ...styler({ type, required }) }>{ children }</label>
+    <label { ...styler({ type, keyPath, required, recommended }) }>{ children }</label>
 	);
 }
 
 export default function Field({
   type,
+  keyPath,
   title,
   description,
   required,
@@ -103,6 +122,7 @@ export default function Field({
   return (
     <Label
       type={ type }
+      keyPath={ keyPath }
       title={ title }
       description={ description }
       required={ required }
@@ -112,6 +132,7 @@ export default function Field({
     >
       <Input
         type={ type }
+        keyPath={ keyPath }
         styler={ inputStyler }
         { ...rest }
         onChangeValue={ onChangeValue }
@@ -119,3 +140,5 @@ export default function Field({
     </Label>
   );
 };
+
+Field.displayName = 'Meadow.Web.Field'

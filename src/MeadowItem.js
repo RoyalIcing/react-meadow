@@ -47,21 +47,24 @@ const MeadowItem = React.createClass({
   },
 
   onAdd() {
-    const newIndex = this.props.value.length;
-    this.props.onReplaceInfoAtKeyPath({}, this.getKeyPath([newIndex]));
+    const { keyPath, value, onReplaceInfoAtKeyPath } = this.props;
+    const newIndex = value.length;
+    onReplaceInfoAtKeyPath({}, keyPath.concat(newIndex));
   },
 
   onRemoveAtIndex(index) {
-    // FIXME:
-    this.props.onReplaceInfoAtKeyPath(null, this.getKeyPath([index]));
+    const { keyPath, onReplaceInfoAtKeyPath } = this.props;
+    onReplaceInfoAtKeyPath(null, keyPath.concat(index));
   },
 
   onChangeValue(newValue) {
-    this.props.onReplaceInfoAtKeyPath(newValue, this.getKeyPath());
+    const { keyPath, onReplaceInfoAtKeyPath } = this.props;
+    onReplaceInfoAtKeyPath(newValue, keyPath);
   },
 
   render() {
     const {
+      keyPath,
       field: {
         type,
         id,
@@ -76,23 +79,26 @@ const MeadowItem = React.createClass({
       level,
       ignoreMultiple = false,
       inMultiple,
+      Meadow,
       fieldComponent: Field,
       groupComponent,
       multipleComponent: Multiple,
     } = this.props;
 
-    console.log('field', this.props.field)
+    console.log('type', type, 'keyPath', keyPath, 'field', this.props.field)
 
     if (multiple && !ignoreMultiple) {
       return (
         <Multiple key={ id }
+          keyPath={ keyPath }
           type={ type }
           title={ title }
           description={ description }
-          values={ value }
+          values={ value || [] }
           inMultiple={ inMultiple }
           itemComponent={ ({ value, index }) => (
             <MeadowItem
+              keyPath={ keyPath.concat(index) }
               field={ this.props.field }
               fieldSpecs={ fieldSpecs }
               typeSpecs={ typeSpecs }
@@ -115,9 +121,11 @@ const MeadowItem = React.createClass({
       );
     }
     else if (type === 'group') {
+      console.log('GROUP', keyPath)
       return (
         <Meadow key={ id }
           { ...rest }
+          keyPath={ keyPath }
           values={ value }
           fieldSpecs={ fieldSpecs }
           typeSpecs={ typeSpecs }
@@ -136,6 +144,7 @@ const MeadowItem = React.createClass({
       return (
         <TypeChoice key={ id }
           { ...rest }
+          keyPath={ keyPath }
           value={ value }
           fieldSpecs={ fieldSpecs }
           typeSpecs={ typeSpecs }
@@ -153,6 +162,7 @@ const MeadowItem = React.createClass({
       return (
         <ChoiceField key={ id }
           { ...rest }
+          keyPath={ keyPath }
           type={ type }
           value={ value }
           title={ title }
@@ -167,6 +177,7 @@ const MeadowItem = React.createClass({
       return (
         <Field key={ id }
           { ...rest }
+          keyPath={ keyPath }
           type={ type }
           value={ value }
           title={ title }
@@ -189,11 +200,11 @@ const MeadowItem = React.createClass({
       if (multiple) {
         props.values = value;
         props.onChangeValueAtIndex = (newValue, valueIndex) => {
-          onReplaceInfoAtKeyPath(newValue, [id, valueIndex]);
+          onReplaceInfoAtKeyPath(newValue, keyPath.concat([id, valueIndex]));
         };
 
         return (
-          <TextualFieldMultiple { ...props } { ...rest } />
+          <TextualFieldMultiple { ...props } keyPath={ keyPath } { ...rest } />
         );
       }
       else {
@@ -201,7 +212,7 @@ const MeadowItem = React.createClass({
         props.onChangeValue = this.onChangeValue;
 
         return (
-          <TextualField { ...props } { ...rest } />
+          <TextualField { ...props } keyPath={ keyPath } { ...rest } />
         );
       }
     }
