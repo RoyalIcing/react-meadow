@@ -94,8 +94,6 @@ const Meadow = React.createClass({
       onReplaceInfoAtKeyPath,
     } = this.props;
 
-    console.log('<Meadow> keyPath', keyPath)
-
     const fieldElements = this.state.resolvedFields.map((field) => (
       <MeadowItem
         key={ field.id }
@@ -114,7 +112,7 @@ const Meadow = React.createClass({
     ));
 
     return (
-      <Group level={ level } typeChoiceField={ typeChoiceField } title={ title } description={ description } required={ required } recommended={ recommended } inMultiple={ inMultiple }>
+      <Group keyPath={ keyPath } level={ level } typeChoiceField={ typeChoiceField } title={ title } description={ description } required={ required } recommended={ recommended } inMultiple={ inMultiple }>
         { fieldElements }
       </Group>
     );
